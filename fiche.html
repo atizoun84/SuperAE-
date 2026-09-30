@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>FicheAPcreator - Générateur de Fiche Pédagogique d'Animation PCT</title>
+    <meta name="theme-color" content="#008069">
+    <meta name="description" content="Générateur de fiches pédagogiques d'animation pour les enseignants de PCT">
+    <!-- ===== PWA : Manifest & Meta ===== -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#075e54">
+    <link rel="icon" type="image/png" href="logoapp.png">
+    <link rel="apple-touch-icon" href="logoapp.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Cormorant+Garamond:wght@500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ===== THÈME WHATSAPP MESSENGER ===== */
+            --main-bg-color: #efeae2;
+            --primary-green: #008069;
+            --secondary-green: #128c7e;
+            --card-bg: #ffffff;
+            --dark-text: #111b21;
+            --muted-text: #667781;
+            --card-shadow: 0 1px 3px rgba(11, 20, 26, 0.13);
+            
+            /* Variables de compatibilité avec l'ancien code */
+            --primary: #008069;
+            --primary-dark: #00695c;
+            --secondary: #128c7e;
+            --secondary-light: #25d366;
+            --accent: #25d366;
+            --accent-light: #dcf8c6;
+            --success: #25d366;
+            --warning: #f0ad4e;
+            --danger: #e74c3c;
+            --dark: #054c44;
+            --surface: #ffffff;
+            --text: #111b21;
+            --muted: #667781;
+            --whatsapp-bg: #e5ddd5;
+        }
+        
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            background-color: var(--main-bg-color);
+            background-attachment: fixed;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 0 0 55px 0;
+            color: var(--dark-text);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ====== NAVBAR (style WhatsApp uniformisé) ====== */
+        .app-navbar {
+            background-color: var(--primary-green);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+        .app-navbar .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #ffffff !important;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0;
+            margin-right: 20px;
+        }
+        .app-navbar .navbar-brand > i.fa-chalkboard-teacher {
+            color: #ffffff;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .brand-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+            gap: 2px;
+        }
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.08rem;
+            color: #ffffff;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+        .brand-user-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 0.2px;
+        }
+        .app-navbar .nav-link {
+            color: #ffffff !important;
+            font-weight: 500;
+            font-size: 0.92rem;
+            padding: 8px 16px !important;
+            border-radius: 0;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .app-navbar .nav-link i {
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+        .app-navbar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff !important;
+        }
+        .app-navbar .nav-link.active {
+            color: #ffffff !important;
+            font-weight: bold;
+            border-bottom: 3px solid #ffffff;
+            background: transparent;
+        }
+        .app-navbar .navbar-toggler {
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 4px 8px;
+        }
+        .app-navbar .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.15rem rgba(255, 255, 255, 0.3);
+        }
+        .app-navbar .navbar-toggler-icon {
+            filter: invert(1);
+        }
+        
+        .container {
+            max-width: 1400px;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            border-radius: 8px;
+            border: none;
+            color: var(--dark-text);
+            margin-bottom: 25px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: bold;
+            border-bottom: 2px solid #dcf8c6;
+        }
+        
+        .card-header h3, .card-header h4 {
+            margin: 0;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-green);
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1.5px solid #e9edef;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-green);
+            box-shadow: 0 0 0 0.2rem rgba(18, 140, 126, 0.18);
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(37, 211, 102, 0.4);
+            color: #fff;
+        }
+        
+        .btn-reset {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(231, 76, 60, 0.4);
+            color: #fff;
+        }
+        
+        .btn-copy {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0, 128, 105, 0.4);
+            color: #fff;
+        }
+        
+        .prompt-area {
+            background: #0d1b2a;
+            color: #e8ecf1;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            min-height: 550px;
+            max-height: 650px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-top: 1px solid rgba(37, 211, 102, 0.25);
+        }
+        
+        .section-title {
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+            margin: 20px 0 15px 0;
+            color: var(--primary-green);
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        
+        .sub-section {
+            background: #f0f2f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 3px solid rgba(37, 211, 102, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            body {
+                padding-bottom: 75px;
+            }
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+        .form-check-input:focus {
+            border-color: var(--secondary-green);
+            box-shadow: 0 0 0 0.15rem rgba(18, 140, 126, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .image-config {
+            background: #f4f8fc;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Styles pour les champs d'images dynamiques */
+        .image-detail-block {
+            background: #ffffff;
+            border: 1px solid #e9edef;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        .image-detail-block .row {
+            margin-bottom: 4px;
+        }
+        .image-detail-block .form-label {
+            font-size: 0.78rem;
+            margin-top: 0;
+            margin-bottom: 2px;
+        }
+        .image-detail-block .form-control,
+        .image-detail-block .form-select {
+            font-size: 0.82rem;
+            padding: 4px 8px;
+        }
+        .image-grid-options {
+            background: #dcf8c6;
+            border: 1px solid #b8e6a0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+        }
+        .cm-hint {
+            font-size: 0.72rem;
+            color: var(--muted-text);
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        /* ====== FOOTER (style WhatsApp) ====== */
+        .app-footer {
+            background-color: #f0f2f5;
+            color: var(--muted-text);
+            padding: 1rem 0;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid #e9edef;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1015;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .app-footer .footer-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--primary-green);
+            letter-spacing: 0.5px;
+            font-size: 0.53rem;
+        }
+        .app-footer .footer-sep {
+            color: rgba(0, 128, 105, 0.5);
+            margin: 0 4px;
+        }
+        .app-footer a {
+            color: var(--secondary-green);
+            text-decoration: underline;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.53rem;
+        }
+        .app-footer a:hover {
+            color: var(--primary-green);
+        }
+        .app-footer .footer-copy {
+            margin-top: 3px;
+            font-size: 0.4rem;
+            color: var(--muted-text);
+        }
+        .app-footer i.fa-microchip {
+            color: var(--primary-green);
+            margin-right: 3px;
+            font-size: 0.53rem;
+        }
+
+        /* ====== MODAL À PROPOS ====== */
+        .about-modal .modal-content {
+            border-radius: 16px;
+            border: 1px solid rgba(0, 128, 105, 0.5);
+            overflow: hidden;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+        }
+        .about-modal .modal-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: #fff;
+            border-bottom: 2px solid var(--accent);
+            padding: 14px 22px;
+        }
+        .about-modal .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        .about-modal .modal-title i {
+            color: #dcf8c6;
+        }
+        .about-modal .btn-close {
+            filter: invert(1) brightness(2);
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+        .about-modal .btn-close:hover {
+            opacity: 1;
+        }
+        .about-modal .modal-body {
+            padding: 34px 26px 26px 26px;
+            background: linear-gradient(180deg, #ffffff 0%, #f0f2f5 100%);
+            text-align: center;
+        }
+        .about-modal-emblem {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.2), rgba(18, 140, 126, 0.25));
+            border: 1px solid rgba(37, 211, 102, 0.6);
+            margin-bottom: 18px;
+            box-shadow: 0 0 30px rgba(37, 211, 102, 0.25);
+        }
+        .about-modal-emblem i {
+            font-size: 1.8rem;
+            color: var(--accent);
+        }
+        .about-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(1.35rem, 3vw, 1.7rem);
+            color: var(--primary-green);
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+        .about-modal-title .gold {
+            color: var(--accent);
+            font-style: italic;
+        }
+        .about-modal-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1rem, 1.6vw, 1.12rem);
+            color: #475569;
+            max-width: 620px;
+            margin: 0 auto 26px auto;
+            line-height: 1.65;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .about-modal-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .about-modal-benefits .benefit-chip {
+            background: rgba(0, 128, 105, 0.06);
+            border: 1px solid rgba(37, 211, 102, 0.5);
+            color: var(--primary-green);
+            padding: 9px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+        .about-modal-benefits .benefit-chip:hover {
+            background: rgba(37, 211, 102, 0.18);
+            border-color: rgba(37, 211, 102, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.2);
+        }
+        .about-modal-benefits .benefit-chip i {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        .about-modal .modal-footer {
+            background: #f0f2f5;
+            border-top: 1px solid rgba(0, 128, 105, 0.3);
+            padding: 14px 20px;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .about-modal .btn-close-modal {
+            background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 30px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .about-modal .btn-close-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(18, 140, 126, 0.4);
+            color: #fff;
+        }
+        .about-modal .btn-close-modal i {
+            margin-right: 6px;
+        }
+
+        /* ====== MODAL PROMPT SPÉCIAL ====== */
+        .special-prompt-modal .modal-content {
+            border-radius: 16px;
+            border: 1px solid rgba(231, 76, 60, 0.45);
+            overflow: hidden;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+        }
+        .special-prompt-modal .modal-header {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+            color: #fff;
+            border-bottom: 2px solid var(--accent);
+            padding: 14px 22px;
+        }
+        .special-prompt-modal .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+        .special-prompt-modal .modal-title i {
+            color: #dcf8c6;
+        }
+        .special-prompt-modal .btn-close {
+            filter: invert(1) brightness(2);
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+        .special-prompt-modal .btn-close:hover {
+            opacity: 1;
+        }
+        .special-prompt-modal .modal-body {
+            padding: 26px 24px;
+            background: linear-gradient(180deg, #ffffff 0%, #fef7f7 100%);
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .special-prompt-content {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.92rem;
+            line-height: 1.75;
+            color: #c0392b;
+            font-weight: 700;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #fff5f5;
+            border-left: 4px solid var(--danger);
+            border-radius: 10px;
+            padding: 20px 22px;
+        }
+        .special-prompt-modal .modal-footer {
+            background: #fef7f7;
+            border-top: 1px solid rgba(231, 76, 60, 0.25);
+            padding: 14px 20px;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .special-prompt-modal .btn-copy-special {
+            background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 28px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .special-prompt-modal .btn-copy-special:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(18, 140, 126, 0.4);
+            color: #fff;
+        }
+        .special-prompt-modal .btn-close-special {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 30px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .special-prompt-modal .btn-close-special:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+            color: #fff;
+        }
+
+        /* ====== NOUVEAU : Style chronogramme APZ ====== */
+        .chrono-row {
+            background: #ffffff;
+            border: 1px solid #e9edef;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+        }
+        .chrono-row .form-label {
+            font-size: 0.72rem;
+            margin-top: 0;
+            margin-bottom: 2px;
+        }
+        .chrono-row .form-control {
+            font-size: 0.82rem;
+            padding: 4px 8px;
+        }
+        .apz-section-hint {
+            font-size: 0.75rem;
+            color: var(--muted-text);
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+
+        /* ====== NOUVEAU : Stratégies multi-choix (checkboxes) ====== */
+        .strategies-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px 10px;
+            margin-top: 2px;
+        }
+        .strategies-group .form-check {
+            margin: 0;
+            padding-left: 1.3em;
+            min-height: auto;
+        }
+        .strategies-group .form-check-input {
+            margin-top: 0.15em;
+            margin-left: -1.3em;
+            width: 0.85em;
+            height: 0.85em;
+        }
+        .strategies-group .form-check-label {
+            font-size: 0.72rem;
+            color: #334155;
+            cursor: pointer;
+            line-height: 1.15;
+        }
+
+        /* ====== NOUVEAU : Pré-remplissage "liberté de création" (rouge gras) ====== */
+        .prefill-libre {
+            color: #c00000 !important;
+            font-weight: 700 !important;
+        }
+
+        /* ===== BOUTON D'INSTALLATION FLOTTANT (WhatsApp green) ===== */
+        #pwaInstallButton {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 1050;
+          background-color: #25d366;
+          color: #ffffff;
+          border: none;
+          border-radius: 50px;
+          padding: 12px 20px;
+          font-weight: 600;
+          font-size: 0.95rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+          display: none;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: transform 0.2s ease, background-color 0.2s ease;
+          animation: pulseInstall 2s infinite;
+        }
+        #pwaInstallButton:hover {
+          background-color: #128c7e;
+          transform: scale(1.05);
+        }
+        #pwaInstallButton.show {
+          display: flex;
+        }
+        #pwaInstallButton .icon {
+          font-size: 1.2rem;
+        }
+        @keyframes pulseInstall {
+          0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+          50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
+        }
+    </style>
+</head>
+<body onload="chargerDonnees()">
+
+    <!-- ====== NAVBAR (style WhatsApp uniformisé, liens mis à jour) ====== -->
+    <nav class="navbar navbar-expand-lg app-navbar" id="mainNavbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <div class="brand-text-wrapper">
+                    <span class="brand-title">FicheAPcreator</span>
+                    <span class="brand-user-line">
+                        <i class="fas fa-flask" style="color: rgba(255, 255, 255, 0.85); font-size: 0.7rem;"></i>
+                        <span>Fiches pédagogiques PCT</span>
+                    </span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Basculer la navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="config-annee.html">
+                            <i class="fas fa-calendar-alt"></i> Configuration
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="programmation.html">
+                            <i class="fas fa-list-check"></i> Programmation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="export.html">
+                            <i class="fas fa-file-export"></i> Export
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="aide.html">
+                            <i class="fas fa-question-circle"></i> Aide
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#specialPromptModal">
+                            <i class="fas fa-code"></i> PROMPT SPÉCIAL DE MODIF CODE LaTeX
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="fas fa-info-circle"></i> À propos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+         CONTENU PRINCIPAL
+         ============================================================ -->
+    <div id="appContent">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-sliders-h"></i> Paramètres de la Fiche Pédagogique</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="promptForm">
+                            <!-- ===== Option entête générale (image) ===== -->
+                            <div class="sub-section mb-2" style="background:#dcf8c6; border-left:3px solid var(--accent);">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="hasEnteteGenerale">
+                                    <label class="form-check-label" for="hasEnteteGenerale" style="font-weight:600;">
+                                        <i class="fas fa-image"></i> L'établissement utilise une <strong>entête générale</strong> (image pleine largeur)
+                                    </label>
+                                </div>
+                                <div class="cm-hint">
+                                    L'image doit être importée dans Overleaf sous le nom fixe <code>entete.png</code>.
+                                    Elle s'affichera en haut de la première page, sur toute la largeur, avec une hauteur adaptée à une entête officielle de document.
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-flag"></i> Pays</label>
+                                    <input type="text" class="form-control" id="pays" placeholder="Ex: RÉPUBLIQUE DU BÉNIN" style="text-transform: uppercase;">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-building-columns"></i> Direction Départementale</label>
+                                    <input type="text" class="form-control" id="directionDepartementale" placeholder="Ex: DDESTFP DE L'ATLANTIQUE" style="text-transform: uppercase;">
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-school"></i> Établissement</label>
+                                    <input type="text" class="form-control" id="etablissement" placeholder="Ex: CEG GAMIA">
+                                    <div class="form-check mt-1">
+                                        <input class="form-check-input" type="checkbox" id="hasLogoEtablissement">
+                                        <label class="form-check-label" for="hasLogoEtablissement">
+                                            <i class="fas fa-stamp"></i> L'établissement dispose d'un logo / timbre
+                                        </label>
+                                    </div>
+                                    <div id="logoConfig" style="display:none;" class="mt-1">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-label" style="font-size:0.78rem;">Nom du fichier image</label>
+                                                <input type="text" class="form-control form-control-sm" id="logoFileName" value="logo.png" placeholder="logo.png">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" style="font-size:0.78rem;">Taille du logo</label>
+                                                <select class="form-select form-select-sm" id="logoSize">
+                                                    <option value="small">Petit (1.5cm)</option>
+                                                    <option value="medium" selected>Moyen (2.5cm)</option>
+                                                    <option value="large">Grand (3.5cm)</option>
+                                                    <option value="custom">Personnalisée</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1" id="logoCustomSizeRow" style="display:none;">
+                                            <div class="col-md-12">
+                                                <label class="form-label" style="font-size:0.78rem;">Dimensions personnalisées</label>
+                                                <input type="text" class="form-control form-control-sm" id="logoCustomSize" placeholder="Ex: 2cm, 0.2\textwidth">
+                                                <div class="cm-hint">Utilisez les unités LaTeX (cm, mm, \textwidth...)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-calendar"></i> Année scolaire</label>
+                                    <input type="text" class="form-control" id="anneeScolaire" placeholder="Ex: 2025-2026" inputmode="numeric" maxlength="9" autocomplete="off">
+                                    <div class="cm-hint">Saisissez les 4 chiffres de l'année — le tiret et l'année suivante sont générés automatiquement.</div>
+                                </div>
+                            </div>
+
+                            <!-- ===== EN-TÊTE ADMINISTRATIF APZ ===== -->
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-sitemap"></i> Structure organisatrice</label>
+                                    <input type="text" class="form-control" id="structureOrganisatrice" placeholder="Ex: Coordination de l'APZ Atlantique / Inspection / Zone">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-users-rectangle"></i> Type d'animation</label>
+                                    <select class="form-select" id="typeAnimation">
+                                        <option value="Animation Pédagogique de Zone">Animation Pédagogique de Zone (APZ)</option>
+                                        <option value="Animation Pédagogique d'Établissement">Animation Pédagogique d'Établissement (APE)</option>
+                                        <option value="Animation Pédagogique Départementale">Animation Pédagogique Départementale (APD)</option>
+                                        <option value="Atelier de Renforcement">Atelier de Renforcement</option>
+                                        <option value="Séance de Formation Continue">Séance de Formation Continue</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-calendar-day"></i> Date de l'animation</label>
+                                    <input type="date" class="form-control" id="dateAnimation">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-map-marker-alt"></i> Lieu</label>
+                                    <input type="text" class="form-control" id="lieuAnimation" placeholder="Ex: CEG GAMIA, salle polyvalente">
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-lightbulb"></i> Thème de l'animation</label>
+                                    <input type="text" class="form-control" id="themeAnimation" placeholder="Ex: Les mélanges et les techniques de séparation">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="fas fa-user-tie"></i> Nom de l'animateur de la séance</label>
+                                    <input type="text" class="form-control" id="nomAnimateur" placeholder="Ex: M. AMOUSSOU Atizoun Plateny">
+                                </div>
+                            </div>
+
+                            <!-- ===== OBJECTIFS APZ ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-bullseye"></i> Objectifs de l'animation (APZ)</h5>
+                            <div class="sub-section">
+                                <label class="form-label"><i class="fas fa-flag-checkered"></i> Objectif général</label>
+                                <textarea class="form-control" id="objectifGeneral" rows="2" placeholder="Ex: Amener les enseignants de PCT à maîtriser les techniques d'animation sur les mélanges et les concentrations."></textarea>
+
+                                <label class="form-label mt-2"><i class="fas fa-layer-group"></i> Objectif spécifique — Axe 1 : maîtrise didactique et technique</label>
+                                <input type="text" class="form-control" id="objectifAxe1" placeholder="Ex: Maîtriser la progression didactique de la leçon sur les mélanges.">
+
+                                <label class="form-label mt-2"><i class="fas fa-layer-group"></i> Objectif spécifique — Axe 2 : exploitation conceptuelle / raisonnement</label>
+                                <input type="text" class="form-control" id="objectifAxe2" placeholder="Ex: Exploiter les modes de raisonnement propres aux PCT pour analyser des situations-problèmes.">
+
+                                <label class="form-label mt-2"><i class="fas fa-layer-group"></i> Objectif spécifique — Axe 3 : évaluation / transfert / remédiation</label>
+                                <input type="text" class="form-control" id="objectifAxe3" placeholder="Ex: Concevoir des situations d'évaluation et de remédiation adaptées.">
+                            </div>
+
+                            <!-- ===== CONTEXTE ET JUSTIFICATION APZ ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-clipboard-list"></i> Contexte et justification (APZ)</h5>
+                            <div class="sub-section">
+                                <label class="form-label"><i class="fas fa-exclamation-triangle"></i> Constats de terrain / Difficultés des apprenants</label>
+                                <textarea class="form-control" id="constatsTerrain" rows="3" placeholder="Ex: Résultats faibles aux examens, difficultés à distinguer les mélanges, confusion entre concentration massique et molaire..."></textarea>
+
+                                <label class="form-label mt-2"><i class="fas fa-scroll"></i> Références aux programmes / curriculaires</label>
+                                <input type="text" class="form-control" id="referencesProgrammes" placeholder="Ex: Programme éducatif PCT 5ème, compétence CD n°1, module 2...">
+                            </div>
+
+                            <!-- ===== SITUATION DE DÉPART APZ ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-play-circle"></i> Situation de départ (APZ)</h5>
+                            <div class="sub-section">
+                                <div class="apz-section-hint"><i class="fas fa-info-circle"></i> Cette situation doit présenter un problème professionnel réel et un besoin de remédiation (texte narratif + question + tâche).</div>
+                                <label class="form-label"><i class="fas fa-question-circle"></i> Questionnement / Problème professionnel de départ</label>
+                                <textarea class="form-control" id="situationDepart" rows="3" placeholder="Ex: Comment aider les enseignants à mieux faire comprendre la distinction entre mélange homogène et hétérogène aux apprenants ?"></textarea>
+                            </div>
+
+                            <!-- ===== TÂCHE GÉNÉRALE ===== -->
+                            <label class="form-label mt-2"><i class="fas fa-tasks"></i> Tâche générale</label>
+                            <textarea class="form-control" id="tache" rows="2" placeholder="Ex: Outiller les enseignants dans la construction et l'exploitation des graphes comme outils de conceptualisation."></textarea>
+
+                            <!-- ===== ACTIVITÉS APZ ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-tasks"></i> Activités détaillées (APZ)</h5>
+                            <div class="sub-section">
+                                <div class="apz-section-hint"><i class="fas fa-info-circle"></i> Décrivez les activités de formation. Les consignes seront numérotées automatiquement dans le rendu LaTeX. Plusieurs stratégies peuvent être cochées par activité. Les durées seront ventilées sur les stratégies dans le prompt.</div>
+
+                                <!-- Nombre d'activités -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-list-ol"></i> Nombre d'activités</label>
+                                        <input type="number" class="form-control" id="nbActivites" value="4" min="1" max="10">
+                                        <div class="cm-hint">Conditionne le nombre de blocs d'activités et le nombre de lignes du chronogramme ci-dessous.</div>
+                                    </div>
+                                </div>
+
+                                <!-- Conteneur dynamique des activités -->
+                                <div id="activitesContainer"></div>
+                            </div>
+
+                            <!-- ===== CHRONOGRAMME APZ (APRÈS les activités) ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-clock"></i> Chronogramme de la séance (APZ)</h5>
+                            <div class="sub-section">
+                                <div class="apz-section-hint"><i class="fas fa-info-circle"></i> Le chronogramme reprend automatiquement les titres d'activités saisis ci-dessus. Saisissez uniquement l'horaire de départ (ex : 8h) — le tiret et l'heure de fin (ex : -9h) sont générés automatiquement.</div>
+
+                                <!-- Conteneur dynamique du chronogramme -->
+                                <div id="chronoContainer"></div>
+                            </div>
+
+                            <!-- ===== CONNAISSANCES / CONTENU ===== -->
+                            <label class="form-label mt-2"><i class="fas fa-book"></i> Connaissances / Techniques pédagogiques et didactique à apprendre</label>
+                            <input type="text" class="form-control" id="connaissances" placeholder="Ex: Mélanges homogènes/hétérogènes, Séparation, Concentration massique et molaire">
+
+                            <label class="form-label mt-2"><i class="fas fa-globe"></i> Contexte (situation-problème)</label>
+                            <textarea class="form-control" id="contexte" rows="3" placeholder="Décrivez une histoire avec un évènement perturbant posant un problème réel et motivant..."></textarea>
+
+                            <div class="row mt-2">
+                                <div class="col-md-8">
+                                    <label class="form-label"><i class="fas fa-image"></i> Support / Indices support</label>
+                                    <input type="text" class="form-control" id="support" placeholder="Ex: Tableau des mélanges, tableau de données numériques avec masses, volumes et températures">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="supportSchema">
+                                        <label class="form-check-label">
+                                            <i class="fas fa-chalkboard"></i> Le support comporte des schémas/figures
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gestion des images pour la discipline simple -->
+                            <div class="image-config mt-2">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="hasImagesSimple">
+                                            <label class="form-check-label">Autoriser les images/schémas</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="imagesSimpleConfig" style="display:none;">
+                                        <label class="form-label">Nombre d'images</label>
+                                        <input type="number" class="form-control" id="nbImagesSimple" value="1" min="1" max="10">
+                                        <div id="imageDetailsSimple" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== ÉVALUATION DE LA FORMATION APZ ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-clipboard-check"></i> Évaluation de la formation (APZ)</h5>
+                            <div class="sub-section">
+                                <label class="form-label"><i class="fas fa-list-check"></i> Grille d'évaluation / Points à faire le point</label>
+                                <textarea class="form-control" id="grilleEvaluation" rows="3" placeholder="Ex: Savoirs construits ; Savoir-faire maîtrisés ; Points à approfondir ; Satisfaction des participants..."></textarea>
+
+                                <label class="form-label mt-2"><i class="fas fa-forward"></i> Thèmes proposés pour les prochaines animations</label>
+                                <textarea class="form-control" id="themesProchains" rows="2" placeholder="Ex: Les solutions aqueuses et leur conductivité ; Les réactions d'oxydoréduction en classe de 3ème..."></textarea>
+                            </div>
+
+                            <!-- ===== ANNEXES APZ ===== -->
+                            <h5 class="section-title mt-3"><i class="fas fa-paperclip"></i> Annexes (APZ)</h5>
+                            <div class="sub-section">
+                                <label class="form-label"><i class="fas fa-lightbulb"></i> Clarifications conceptuelles</label>
+                                <textarea class="form-control" id="annexeClarifications" rows="2" placeholder="Ex: Définitions officielles, schémas interprétatifs, rappels de cours..."></textarea>
+
+                                <label class="form-label mt-2"><i class="fas fa-tools"></i> Outils d'analyse</label>
+                                <input type="text" class="form-control" id="annexeOutilsAnalyse" placeholder="Ex: Grille d'analyse des erreurs, tableau comparatif des méthodes">
+
+                                <label class="form-label mt-2"><i class="fas fa-table"></i> Grilles d'interprétation</label>
+                                <input type="text" class="form-control" id="annexeGrillesInterpretation" placeholder="Ex: Grille d'interprétation des résultats d'examen, grille de lecture des productions d'élèves">
+
+                                <label class="form-label mt-2"><i class="fas fa-flask"></i> Données expérimentales</label>
+                                <input type="text" class="form-control" id="annexeDonneesExperimentales" placeholder="Ex: Tableau de mesures de masses et volumes, relevés de températures">
+
+                                <label class="form-label mt-2"><i class="fas fa-chart-line"></i> Exemples de graphiques</label>
+                                <input type="text" class="form-control" id="annexeExemplesGraphiques" placeholder="Ex: Courbe de variation de la masse volumique en fonction de la température">
+                            </div>
+
+                            <h5 class="section-title mt-3"><i class="fas fa-paint-brush"></i> Mise en forme LaTeX (Design)</h5>
+                            <div class="sub-section">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Police de caractères</label>
+                                        <select class="form-select" id="latexFont">
+                                            <option value="Latin Modern">Standard (Latin Modern)</option>
+                                            <option value="Helvetica">Helvetica / Arial</option>
+                                            <option value="Times">Times New Roman</option>
+                                            <option value="Palatino">Palatino</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Taille police</label>
+                                        <select class="form-select" id="latexFontSize">
+                                            <option value="10pt">10pt</option>
+                                            <option value="11pt">11pt</option>
+                                            <option value="12pt" selected>12pt</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Couleur accents</label>
+                                        <input type="color" class="form-control form-control-color w-100" id="latexColor" value="#008069" title="Couleur pour les titres">
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Dispositions (Marges)</label>
+                                        <input type="text" class="form-control" id="latexMarges" value="1.5cm" placeholder="Ex: 1.5cm">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Séparations (Épaisseur ligne)</label>
+                                        <input type="text" class="form-control" id="latexRuleWidth" value="0.5pt" placeholder="Ex: 0.5pt">
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Numérotation pages</label>
+                                        <select class="form-select" id="latexPageNumber">
+                                            <option value="bottom">Bas de page (X/Y)</option>
+                                            <option value="top">Haut de page</option>
+                                            <option value="none" selected>Aucune</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Filigrane (Brouillon)</label>
+                                        <select class="form-select" id="latexWatermark">
+                                            <option value="none" selected>Aucun</option>
+                                            <option value="CONFIDENTIEL">CONFIDENTIEL</option>
+                                            <option value="SESSION 2026">SESSION 2026</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="latexTwoColumns">
+                                            <label class="form-check-label">Format 2 colonnes</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Espacement entre lignes</label>
+                                        <select class="form-select" id="latexLineSpacing">
+                                            <option value="1.0">Simple (1.0)</option>
+                                            <option value="1.2" selected>Aéré (1.2)</option>
+                                            <option value="1.5">Double (1.5)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-generate w-100" onclick="genererPrompt()">
+                                        <i class="fas fa-magic"></i> Générer le prompt
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-reset w-100" onclick="resetForm()">
+                                        <i class="fas fa-undo-alt"></i> Remettre à zéro
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-copy w-100" onclick="copierPrompt()">
+                                        <i class="fas fa-copy"></i> Copier le prompt
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-code"></i> Prompt généré</h4>
+                        <small class="text-white-50">Sortie : Code LaTeX (Overleaf)</small>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="prompt-area" id="promptResult">
+                            <i class="fas fa-info-circle"></i> Remplissez les paramètres et cliquez sur "Générer le prompt"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-info-circle"></i> Instructions</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Remplissez le contexte avec une situation authentique</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Les indices guident l'IA pour générer une fiche pertinente</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Sortie optimisée pour compilation LaTeX sur Overleaf</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Copiez-collez le prompt dans votre IA préférée</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Fiche pédagogique d'animation conforme à l'APC béninoise et au format APZ</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Structure : En-tête → Objectifs → Situation → Tâche → Chronogramme → Activités → Annexes</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Toutes les données numériques sont dans le support</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Document optimisé pour moins de pages</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="app-footer">
+        <div class="container">
+            <div>
+                <i class="fas fa-microchip"></i>
+                <span class="footer-brand">Concepteur : AMOUSSOU Atizoun Plateny</span>
+                <span class="footer-sep">|</span>
+                <a href="mailto:atizoun@gmail.com">atizoun@gmail.com</a>
+            </div>
+            <div class="footer-copy">
+                &copy; 2026 — FicheAPcreator · Tous droits réservés
+            </div>
+        </div>
+    </footer>
+    </div> <!-- /#appContent -->
+
+    <!-- ====== MODAL PROMPT SPÉCIAL DE MODIF CODE LaTeX ====== -->
+    <div class="modal fade special-prompt-modal" id="specialPromptModal" tabindex="-1" aria-labelledby="specialPromptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="specialPromptModalLabel">
+                        <i class="fas fa-code"></i>
+                        PROMPT SPÉCIAL DE MODIF CODE LaTeX
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="special-prompt-content" id="specialPromptText">Conserve l’intégralité du code LaTeX précédent sans aucune modification de structure, de logique ou de fonctionnement, sauf pour les modifications expressément demandées ci-dessous.
+
+Contraintes absolues :
+- Ne rien modifier dans les fonctionnalités, commandes, environnements, packages, styles, couleurs, paramètres ou sections non affectés par les modifications demandées.
+- Ne pas réécrire le code différemment.
+- Ne pas réorganiser, refactoriser, reformater ou “améliorer” le code existant.
+- Utiliser exactement la base actuelle du code LaTeX fournie.
+- Appliquer uniquement les modifications demandées, de façon chirurgicale, minimale et ciblée.
+- Si une modification demandée est ambiguë, appliquer l’interprétation la plus restrictive et la plus locale possible.
+
+Modifications à appliquer :
+[insérer ici les modifications demandées]
+
+Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identique à l’original.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-copy-special" id="btnCopySpecialPrompt">
+                        <i class="fas fa-copy"></i> Copier le prompt
+                    </button>
+                    <button type="button" class="btn-close-special" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL À PROPOS ====== -->
+    <div class="modal fade about-modal" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutModalLabel">
+                        <i class="fas fa-atom"></i>
+                        À propos de l'application
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="about-modal-emblem">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h2 class="about-modal-title">
+                        Concevez vos fiches <span class="gold">pédagogiques</span> avec élégance
+                    </h2>
+                    <p class="about-modal-subtitle">
+                        L'assistant intelligent qui transforme votre pédagogie en fiches d'animation conformes à l'APC béninoise —
+                        gain de temps, rigueur scientifique et export LaTeX prêt pour Overleaf.
+                    </p>
+                    <div class="about-modal-benefits">
+                        <span class="benefit-chip"><i class="fas fa-bolt"></i> Gain de temps considérable</span>
+                        <span class="benefit-chip"><i class="fas fa-check-double"></i> Conformité APC garantie</span>
+                        <span class="benefit-chip"><i class="fas fa-file-code"></i> Export LaTeX / Overleaf</span>
+                        <span class="benefit-chip"><i class="fas fa-chalkboard-teacher"></i> Fiches d'animation PCT</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
+    <button id="pwaInstallButton" type="button" title="Installer l'application">
+      <span class="icon">📲</span>
+      <span class="label">Installer l'appli</span>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ============================================================
+        // PWA - Installation intelligente + Enregistrement du Service Worker
+        // ============================================================
+
+        // 1) Enregistrement du Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker enregistré :', registration.scope);
+
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        console.log('🔄 Nouvelle version disponible.');
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch((err) => console.error('❌ Échec SW :', err));
+            });
+        }
+
+        // 2) Logique d'installation intelligente
+        (function() {
+            const installBtn = document.getElementById('pwaInstallButton');
+            if (!installBtn) return;
+
+            let deferredPrompt = null;
+
+            // Détection iOS (Safari ne supporte pas beforeinstallprompt)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+            // Détection si déjà installée (mode standalone)
+            const isStandalone =
+                window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true;
+
+            // Si déjà installée, on n'affiche rien
+            if (isStandalone) {
+                console.log('✅ Application déjà installée (mode standalone).');
+                return;
+            }
+
+            // Afficher le bouton selon le contexte
+            function showButton() {
+                installBtn.classList.add('show');
+            }
+            function hideButton() {
+                installBtn.classList.remove('show');
+            }
+
+            // --- CAS 1 : Android / Chrome / Edge (beforeinstallprompt supporté) ---
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showButton();
+            });
+
+            // Clic sur le bouton
+            installBtn.addEventListener('click', async () => {
+                // CAS iOS : instructions manuelles
+                if (isIOS && !deferredPrompt) {
+                    alert(
+                        "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                        "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
+                        "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
+                        "3. Appuyez sur « Ajouter ».\n\n" +
+                        "L'application sera installée comme une vraie appli !"
+                    );
+                    return;
+                }
+
+                // CAS Android : prompt natif
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log('Choix utilisateur :', outcome);
+                    deferredPrompt = null;
+                    hideButton();
+                    return;
+                }
+
+                // Cas de secours (navigateur non compatible)
+                alert(
+                    "Pour installer l'application :\n\n" +
+                    "• Sur Android Chrome : menu ⋮ → « Installer l'application »\n" +
+                    "• Sur iPhone Safari : icône Partager ⬆️ → « Sur l'écran d'accueil »"
+                );
+            });
+
+            // --- CAS 2 : iOS Safari (pas de beforeinstallprompt) ---
+            if (isIOS) {
+                // On affiche le bouton après 3 secondes pour ne pas gêner
+                setTimeout(() => showButton(), 3000);
+            }
+
+            // --- CAS 3 : Navigation non compatible (Firefox, etc.) ---
+            // On affiche aussi le bouton après un délai si rien n'a été déclenché
+            setTimeout(() => {
+                if (!installBtn.classList.contains('show') && !isIOS) {
+                    // On n'affiche que si l'appli n'est pas déjà installée et si SW supporté
+                    if ('serviceWorker' in navigator) {
+                        showButton();
+                    }
+                }
+            }, 5000);
+
+            // Masquer définitivement si l'installation a réussi
+            window.addEventListener('appinstalled', () => {
+                console.log('🎉 Application installée !');
+                hideButton();
+                deferredPrompt = null;
+            });
+        })();
+
+        // ============================================================
+        // STRATÉGIES APZ (multi-sélection)
+        // ============================================================
+        const STRATEGIES_APZ = [
+            "Brainstorming",
+            "Travail Individuel (TI)",
+            "Travail de Groupe (TG)",
+            "Travail Collectif (TC)",
+            "Exposé / Présentation",
+            "Atelier pratique"
+        ];
+
+        function slugify(str) {
+            return str.replace(/[^a-zA-Z0-9]/g, '_');
+        }
+
+        function generateStrategiesCheckboxes(prefix, idx) {
+            let html = '<div class="strategies-group">';
+            STRATEGIES_APZ.forEach((s) => {
+                const id = `${prefix}${idx}Strat_${slugify(s)}`;
+                const group = `${prefix}${idx}Strategies`;
+                html += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="${id}" data-strategy="${s}" data-group="${group}">
+                        <label class="form-check-label" for="${id}">${s}</label>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function getSelectedStrategies(prefix, idx) {
+            const group = `${prefix}${idx}Strategies`;
+            const checkboxes = document.querySelectorAll(`input[data-group="${group}"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.dataset.strategy);
+        }
+
+        // ============================================================
+        // AUTO-COMPLÉTION DES HORAIRES DU CHRONOGRAMME
+        // ============================================================
+        function attachHoraireAutoComplete(input) {
+            if (!input || input.dataset.horaireInit === '1') return;
+            input.dataset.horaireInit = '1';
+
+            input.addEventListener('keydown', function(e) {
+                const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                                     'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                                     'Home', 'End'];
+                if (allowedKeys.indexOf(e.key) !== -1) return;
+                if (e.ctrlKey || e.metaKey) return;
+                if (!/^[\d hHmM:min]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            input.addEventListener('input', function(e) {
+                const type = e.inputType || '';
+                if (type === 'deleteContentBackward' || type === 'deleteContentForward') {
+                    return;
+                }
+
+                let raw = this.value;
+                const match = raw.match(/^(\d{1,2})\s*h\s*(\d{0,2})?/i);
+                if (!match) return;
+
+                let heure = parseInt(match[1], 10);
+                if (isNaN(heure) || heure < 0 || heure > 23) return;
+                const minute = match[2] ? match[2].padStart(2, '0').substring(0, 2) : '';
+
+                const heureSuivante = (heure + 1) % 24;
+                const fin = minute
+                    ? `${heureSuivante}h${minute}`
+                    : `${heureSuivante}h`;
+
+                const cible = `${heure}h${minute ? minute : ''}-${fin}`;
+                const cibleAvecZeros = `${String(heure).padStart(2, '0')}h${minute ? minute : ''}-${String(heureSuivante).padStart(2, '0')}h${minute ? minute : ''}`;
+
+                const heureOrig = match[1];
+                const heureFinStr = heureOrig.length === 2
+                    ? String(heureSuivante).padStart(2, '0')
+                    : String(heureSuivante);
+                const minuteStr = minute ? minute : '';
+                const final = `${heureOrig}h${minuteStr}-${heureFinStr}h${minuteStr}`;
+
+                if (this.value !== final) {
+                    this.value = final;
+                    const len = this.value.length;
+                    this.setSelectionRange(len, len);
+                }
+            });
+
+            input.addEventListener('blur', function() {
+                const raw = this.value.trim();
+                if (!raw) return;
+                if (raw.includes('-')) return;
+                const match = raw.match(/^(\d{1,2})\s*h\s*(\d{0,2})?$/i);
+                if (!match) return;
+                let heure = parseInt(match[1], 10);
+                if (isNaN(heure) || heure < 0 || heure > 23) return;
+                const minute = match[2] ? match[2].padStart(2, '0').substring(0, 2) : '';
+                const heureSuivante = (heure + 1) % 24;
+                const heureOrig = match[1];
+                const heureFinStr = heureOrig.length === 2
+                    ? String(heureSuivante).padStart(2, '0')
+                    : String(heureSuivante);
+                const minuteStr = minute ? minute : '';
+                this.value = `${heureOrig}h${minuteStr}-${heureFinStr}h${minuteStr}`;
+            });
+        }
+
+        // ============================================================
+        // GÉNÉRATION DYNAMIQUE DU CHRONOGRAMME
+        // ============================================================
+        function genererChronogramme(nb) {
+            const container = document.getElementById('chronoContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for (let i = 1; i <= nb; i++) {
+                const block = document.createElement('div');
+                block.className = 'chrono-row';
+                block.innerHTML = `
+                    <div class="row g-1 align-items-center">
+                        <div class="col-md-3">
+                            <label class="form-label">Horaire (début-fin auto)</label>
+                            <input type="text" class="form-control" id="chro${i}Horaire" placeholder="Ex: 8h">
+                        </div>
+                        <div class="col-md-9">
+                            <label class="form-label">Titre de l'activité ${i} (repris des activités détaillées)</label>
+                            <input type="text" class="form-control" id="chro${i}Activite" placeholder="Auto-rempli — ou saisissez directement" readonly style="background:#f1f5f9; cursor:not-allowed;">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(block);
+
+                const horaireInput = document.getElementById('chro' + i + 'Horaire');
+                if (horaireInput) attachHoraireAutoComplete(horaireInput);
+            }
+
+            syncChronoTitlesFromActivites();
+        }
+
+        function syncChronoTitlesFromActivites() {
+            const nb = parseInt(document.getElementById('nbActivites').value) || 4;
+            for (let i = 1; i <= nb; i++) {
+                const titreAct = document.getElementById('activite' + i + 'Titre');
+                const chroAct = document.getElementById('chro' + i + 'Activite');
+                if (titreAct && chroAct) {
+                    chroAct.value = titreAct.value || '';
+                }
+            }
+        }
+
+        // ============================================================
+        // GÉNÉRATION DYNAMIQUE DES ACTIVITÉS DÉTAILLÉES
+        // ============================================================
+        function genererActivites(nb) {
+            const container = document.getElementById('activitesContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for (let i = 1; i <= nb; i++) {
+                const block = document.createElement('div');
+                if (i < nb) {
+                    block.style.borderBottom = '1px dashed #dbe2ea';
+                    block.style.paddingBottom = '12px';
+                    block.style.marginBottom = '12px';
+                }
+                block.innerHTML = `
+                    <label class="form-label"><i class="fas fa-${i <= 9 ? i : 'circle'}"></i> Activité ${i} — Titre</label>
+                    <input type="text" class="form-control" id="activite${i}Titre" placeholder="Ex: Atelier d'analyse des difficultés">
+
+                    <div class="row mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label">Support</label>
+                            <input type="text" class="form-control" id="activite${i}Support" placeholder="Ex: Rapports d'inspection, copies d'élèves">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Durée</label>
+                            <input type="text" class="form-control" id="activite${i}Duree" placeholder="Ex: 30 min">
+                        </div>
+                    </div>
+
+                    <label class="form-label mt-2">Stratégie(s) — plusieurs choix</label>
+                    ${generateStrategiesCheckboxes('act', i)}
+
+                    <label class="form-label mt-2">Consignes (séparez par des points-virgules « ; »)</label>
+                    <textarea class="form-control" id="activite${i}Consignes" rows="2" placeholder="Ex: Analyser les copies ; Identifier les erreurs fréquentes ; Proposer une remédiation"></textarea>
+                `;
+                container.appendChild(block);
+            }
+
+            for (let i = 1; i <= nb; i++) {
+                const titreInput = document.getElementById('activite' + i + 'Titre');
+                if (titreInput) {
+                    titreInput.addEventListener('input', syncChronoTitlesFromActivites);
+                }
+            }
+
+            for (let i = 1; i <= nb; i++) {
+                ['Titre', 'Support', 'Consignes'].forEach(k => {
+                    const el = document.getElementById('activite' + i + k);
+                    if (el) { el.value = LIBRE; majStyleLibre(el); }
+                });
+            }
+
+            syncChronoTitlesFromActivites();
+        }
+
+        // ============================================================
+        // VENTILATION DE LA DURÉE SUR LES STRATÉGIES
+        // ============================================================
+        function ventilerDuree(dureeStr, strategies) {
+            if (!dureeStr || !strategies || strategies.length === 0) return '';
+            if (strategies.length === 1) return `${dureeStr} → ${strategies[0]}`;
+
+            const match = dureeStr.match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
+            if (!match) {
+                return strategies.map(s => `${dureeStr} → ${s}`).join(' | ');
+            }
+            const total = parseFloat(match[1].replace(',', '.'));
+            const unit = (match[2] || '').trim();
+            const perStrategy = total / strategies.length;
+            const isMin = /^m(in|n)$/i.test(unit) || unit === '';
+
+            if (isMin) {
+                const base = Math.floor(perStrategy);
+                let remainder = Math.round(total - base * strategies.length);
+                const parts = strategies.map((s, idx) => {
+                    let d = base;
+                    if (idx < remainder) d += 1;
+                    return `${d} ${unit || 'min'} ${s}`;
+                });
+                return parts.join(' + ');
+            }
+
+            const rounded = Math.round(perStrategy * 100) / 100;
+            return strategies.map(s => `${rounded} ${unit} ${s}`).join(' + ');
+        }
+
+        // ============================================================
+        // GESTION DYNAMIQUE DES IMAGES
+        // ============================================================
+        
+        function generateImageFields(containerId, count, prefix) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= count; i++) {
+                const block = document.createElement('div');
+                block.className = 'image-detail-block';
+                block.innerHTML = `
+                    <div style="font-weight:600; font-size:0.82rem; color:var(--primary); margin-bottom:6px;">
+                        <i class="fas fa-image"></i> Image ${i}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Nom du fichier</label>
+                            <input type="text" class="form-control" id="${prefix}_file_${i}" value="image${i}.png" placeholder="image${i}.png">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Légende / Titre</label>
+                            <input type="text" class="form-control" id="${prefix}_caption_${i}" placeholder="Description de l'image">
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-4">
+                            <label class="form-label">Disposition</label>
+                            <select class="form-select" id="${prefix}_layout_${i}">
+                                <option value="center">Centrée</option>
+                                <option value="left">Alignée à gauche</option>
+                                <option value="right">Alignée à droite</option>
+                                <option value="inline">En ligne (texte)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Taille standard</label>
+                            <select class="form-select" id="${prefix}_size_${i}">
+                                <option value="small">Petite (0.3\\linewidth)</option>
+                                <option value="medium" selected>Moyenne (0.5\\linewidth)</option>
+                                <option value="large">Grande (0.7\\linewidth)</option>
+                                <option value="full">Pleine largeur (1.0\\linewidth)</option>
+                                <option value="custom">Personnalisée</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Dimensions manuelles</label>
+                            <div class="row g-1">
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="${prefix}_width_${i}" placeholder="Largeur" value="">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="${prefix}_height_${i}" placeholder="Hauteur" value="">
+                                </div>
+                            </div>
+                            <div class="cm-hint">Ex: 8cm, 0.4\\linewidth, 5cm</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(block);
+            }
+            
+            if (count > 1) {
+                const gridBlock = document.createElement('div');
+                gridBlock.className = 'image-grid-options';
+                gridBlock.innerHTML = `
+                    <div style="font-weight:600; font-size:0.82rem; color:var(--primary); margin-bottom:6px;">
+                        <i class="fas fa-th"></i> Disposition groupée (${count} images)
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Type de disposition</label>
+                            <select class="form-select" id="${prefix}_grid_type">
+                                <option value="none">Aucune (images séparées)</option>
+                                <option value="grid2">Grille 2 colonnes</option>
+                                <option value="grid3">Grille 3 colonnes</option>
+                                <option value="mosaic">Mosaïque (2x2)</option>
+                                <option value="row">Alignées horizontalement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Largeur de la grille</label>
+                            <select class="form-select" id="${prefix}_grid_width">
+                                <option value="1.0\\linewidth">Pleine largeur (1.0\\linewidth)</option>
+                                <option value="0.8\\linewidth">Réduite (0.8\\linewidth)</option>
+                                <option value="0.6\\linewidth">Compacte (0.6\\linewidth)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label">Espacement entre images</label>
+                            <select class="form-select" id="${prefix}_grid_gap">
+                                <option value="0.5cm">Normal (0.5cm)</option>
+                                <option value="0.2cm">Serré (0.2cm)</option>
+                                <option value="1cm">Aéré (1cm)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Légende globale (optionnel)</label>
+                            <input type="text" class="form-control" id="${prefix}_grid_caption" placeholder="Ex: Figure 1 : Ensemble des schémas">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(gridBlock);
+            }
+        }
+        
+        const hasImagesSimple = document.getElementById('hasImagesSimple');
+        const imagesSimpleConfig = document.getElementById('imagesSimpleConfig');
+        if(hasImagesSimple) {
+            hasImagesSimple.addEventListener('change', function() {
+                imagesSimpleConfig.style.display = this.checked ? 'block' : 'none';
+                if (this.checked) {
+                    const nb = parseInt(document.getElementById('nbImagesSimple').value) || 1;
+                    generateImageFields('imageDetailsSimple', nb, 'simple');
+                }
+            });
+        }
+        
+        const nbImagesSimple = document.getElementById('nbImagesSimple');
+        if (nbImagesSimple) {
+            nbImagesSimple.addEventListener('input', function() {
+                const nb = parseInt(this.value) || 1;
+                if (hasImagesSimple && hasImagesSimple.checked) {
+                    generateImageFields('imageDetailsSimple', nb, 'simple');
+                }
+            });
+        }
+        
+        function getImageData(prefix) {
+            const count = parseInt(document.getElementById('nbImages' + prefix.charAt(0).toUpperCase() + prefix.slice(1)).value) || 1;
+            const images = [];
+            for (let i = 1; i <= count; i++) {
+                const file = document.getElementById(prefix + '_file_' + i)?.value || `image${i}.png`;
+                const caption = document.getElementById(prefix + '_caption_' + i)?.value || '';
+                const layout = document.getElementById(prefix + '_layout_' + i)?.value || 'center';
+                const size = document.getElementById(prefix + '_size_' + i)?.value || 'medium';
+                const width = document.getElementById(prefix + '_width_' + i)?.value || '';
+                const height = document.getElementById(prefix + '_height_' + i)?.value || '';
+                images.push({ file, caption, layout, size, width, height });
+            }
+            
+            const gridType = document.getElementById(prefix + '_grid_type')?.value || 'none';
+            const gridWidth = document.getElementById(prefix + '_grid_width')?.value || '1.0\\linewidth';
+            const gridGap = document.getElementById(prefix + '_grid_gap')?.value || '0.5cm';
+            const gridCaption = document.getElementById(prefix + '_grid_caption')?.value || '';
+            
+            return { images, gridType, gridWidth, gridGap, gridCaption };
+        }
+        
+        function formatImageDataForPrompt(imageData, sectionLabel) {
+            if (!imageData || !imageData.images || imageData.images.length === 0) return '';
+            
+            let result = `\n--- IMAGES POUR ${sectionLabel} ---\n`;
+            result += `Nombre d'images : ${imageData.images.length}\n`;
+            
+            imageData.images.forEach((img, idx) => {
+                const sizeMap = {
+                    'small': '0.3\\linewidth',
+                    'medium': '0.5\\linewidth',
+                    'large': '0.7\\linewidth',
+                    'full': '1.0\\linewidth'
+                };
+                let sizeStr = sizeMap[img.size] || '0.5\\linewidth';
+                if (img.size === 'custom' || img.width || img.height) {
+                    const w = img.width || sizeStr;
+                    const h = img.height ? ` height=${img.height}` : '';
+                    sizeStr = `${w}${h}`;
+                }
+                result += `  Image ${idx + 1} : Fichier "${img.file}" — Légende : "${img.caption}" — Disposition : ${img.layout} — Taille : ${sizeStr}\n`;
+            });
+            
+            if (imageData.gridType && imageData.gridType !== 'none') {
+                result += `  Disposition groupée : ${imageData.gridType} — Largeur : ${imageData.gridWidth} — Espacement : ${imageData.gridGap}`;
+                if (imageData.gridCaption) result += ` — Légende globale : "${imageData.gridCaption}"`;
+                result += `\n`;
+            }
+            
+            return result;
+        }
+
+        // ============================================================
+        // AUTO-COMPLÉTION DE L'ANNÉE SCOLAIRE (format 2025-2026)
+        // ============================================================
+        (function initAnneeScolaireAutoComplete() {
+            const input = document.getElementById('anneeScolaire');
+            if (!input) return;
+
+            input.addEventListener('keydown', function(e) {
+                const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                                     'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                                     'Home', 'End'];
+                if (allowedKeys.indexOf(e.key) !== -1) return;
+                if (e.ctrlKey || e.metaKey) return;
+                if (!/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            input.addEventListener('input', function(e) {
+                const type = e.inputType || '';
+
+                if (type === 'deleteContentBackward' || type === 'deleteContentForward') {
+                    let digits = this.value.replace(/\D/g, '');
+                    if (digits.length <= 4) {
+                        this.value = digits;
+                    } else {
+                        this.value = digits.substring(0, 4);
+                    }
+                    return;
+                }
+
+                let digits = this.value.replace(/\D/g, '');
+                if (digits.length > 4) digits = digits.substring(0, 4);
+
+                if (digits.length === 4) {
+                    const suivante = parseInt(digits, 10) + 1;
+                    this.value = digits + '-' + suivante;
+                } else {
+                    this.value = digits;
+                }
+            });
+
+            input.addEventListener('blur', function() {
+                const digits = this.value.replace(/\D/g, '');
+                if (digits.length === 4) {
+                    const suivante = parseInt(digits.substring(0, 4), 10) + 1;
+                    this.value = digits.substring(0, 4) + '-' + suivante;
+                }
+            });
+        })();
+
+        // ============================================================
+        // GESTION DU NOMBRE D'ACTIVITÉS (conditionne activités + chrono)
+        // ============================================================
+        (function initNbActivites() {
+            const input = document.getElementById('nbActivites');
+            if (!input) return;
+            input.addEventListener('input', function() {
+                let nb = parseInt(this.value) || 1;
+                if (nb < 1) nb = 1;
+                if (nb > 10) nb = 10;
+                genererActivites(nb);
+                genererChronogramme(nb);
+                sauvegarderDonnees();
+            });
+        })();
+
+        // ============================================================
+        // SAUVEGARDE AUTOMATIQUE
+        // ============================================================
+        const PCT_KEY_PREFIX = 'ficheapcreator_field_';
+        const PCT_STORAGE_KEY = 'ficheAPcreator_savedData_v1';
+
+        // ============================================================
+        // PRÉ-REMPLISSAGE « LIBERTÉ DE CRÉATION » (rouge gras, modifiable)
+        // ============================================================
+        const LIBRE = "tu es libre de créer selon les documents officiels récents de l'APC et des PCT au benin";
+        const LIBRE_FLAG = 'ficheAPcreator_libreInit_v1';
+        const LIBRE_IDS = ['objectifGeneral','objectifAxe1','objectifAxe2','objectifAxe3','constatsTerrain','referencesProgrammes','situationDepart','tache','connaissances','contexte','support','grilleEvaluation','themesProchains','annexeClarifications','annexeOutilsAnalyse','annexeGrillesInterpretation','annexeDonneesExperimentales','annexeExemplesGraphiques'];
+
+        function majStyleLibre(el) {
+            if (el) el.classList.toggle('prefill-libre', el.value.trim() === LIBRE);
+        }
+
+        function rafraichirStyleLibre() {
+            document.querySelectorAll('#promptForm input[type="text"], #promptForm textarea').forEach(majStyleLibre);
+            syncChronoTitlesFromActivites();
+        }
+
+        function appliquerPrefillLibre() {
+            const nb = parseInt(document.getElementById('nbActivites').value) || 4;
+            const ids = LIBRE_IDS.slice();
+            for (let i = 1; i <= nb; i++) ids.push('activite' + i + 'Titre', 'activite' + i + 'Support', 'activite' + i + 'Consignes');
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && !el.value.trim()) el.value = LIBRE;
+            });
+            rafraichirStyleLibre();
+        }
+
+        document.getElementById('promptForm').addEventListener('input', e => majStyleLibre(e.target));
+        
+        function sauvegarderDonnees() {
+            const formData = {};
+            const inputs = document.querySelectorAll('#promptForm input, #promptForm textarea, #promptForm select');
+            
+            inputs.forEach(input => {
+                if (input.id) {
+                    const valeur = (input.type === 'checkbox') ? input.checked : input.value;
+                    formData[input.id] = valeur;
+                    try {
+                        localStorage.setItem(PCT_KEY_PREFIX + input.id, JSON.stringify(valeur));
+                    } catch(e) { /* ignore quota errors */ }
+                }
+            });
+            
+            try {
+                localStorage.setItem(PCT_STORAGE_KEY, JSON.stringify(formData));
+            } catch(e) { /* ignore quota errors */ }
+        }
+
+        function chargerDonnees() {
+            const savedData = localStorage.getItem(PCT_STORAGE_KEY);
+            let formData = null;
+            if (savedData) {
+                try { formData = JSON.parse(savedData); } catch(e) {}
+            }
+
+            const nbActivites = formData && formData['nbActivites'] !== undefined
+                ? parseInt(formData['nbActivites']) || 4
+                : 4;
+
+            genererActivites(nbActivites);
+            genererChronogramme(nbActivites);
+
+            if (formData) {
+                for (const id in formData) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (el.type === 'checkbox') {
+                            el.checked = formData[id];
+                        } else {
+                            el.value = formData[id];
+                        }
+                    }
+                }
+            }
+
+            syncChronoTitlesFromActivites();
+
+            if (!localStorage.getItem(LIBRE_FLAG)) {
+                appliquerPrefillLibre();
+                try { localStorage.setItem(LIBRE_FLAG, '1'); } catch(e) {}
+            }
+            rafraichirStyleLibre();
+
+            if(hasImagesSimple) {
+                imagesSimpleConfig.style.display = hasImagesSimple.checked ? 'block' : 'none';
+                if (hasImagesSimple.checked) {
+                    const nb = parseInt(document.getElementById('nbImagesSimple').value) || 1;
+                    generateImageFields('imageDetailsSimple', nb, 'simple');
+                }
+            }
+            if (typeof toggleEnteteGenerale === 'function') toggleEnteteGenerale();
+        }
+        
+        window.PCT_KEY_PREFIX = PCT_KEY_PREFIX;
+        window.getPCTData = function() {
+            const data = {};
+            const savedData = localStorage.getItem(PCT_STORAGE_KEY);
+            if (savedData) {
+                try { Object.assign(data, JSON.parse(savedData)); } catch(e) {}
+            }
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith(PCT_KEY_PREFIX)) {
+                    const fieldId = key.substring(PCT_KEY_PREFIX.length);
+                    try { data[fieldId] = JSON.parse(localStorage.getItem(key)); } catch(e) {}
+                }
+            }
+            return data;
+        };
+        window.getPCTField = function(fieldId, defaultValue) {
+            const raw = localStorage.getItem(PCT_KEY_PREFIX + fieldId);
+            if (raw === null) return (defaultValue !== undefined ? defaultValue : '');
+            try { return JSON.parse(raw); } catch(e) { return raw; }
+        };
+
+        document.getElementById('promptForm').addEventListener('change', sauvegarderDonnees);
+        document.getElementById('promptForm').addEventListener('input', sauvegarderDonnees);
+
+        // ============================================================
+        // GESTION DU LOGO ÉTABLISSEMENT
+        // ============================================================
+        const hasLogoEtablissement = document.getElementById('hasLogoEtablissement');
+        const logoConfig = document.getElementById('logoConfig');
+        const logoSizeSelect = document.getElementById('logoSize');
+        const logoCustomSizeRow = document.getElementById('logoCustomSizeRow');
+
+        if (hasLogoEtablissement) {
+            hasLogoEtablissement.addEventListener('change', function() {
+                logoConfig.style.display = this.checked ? 'block' : 'none';
+            });
+        }
+
+        if (logoSizeSelect) {
+            logoSizeSelect.addEventListener('change', function() {
+                logoCustomSizeRow.style.display = (this.value === 'custom') ? 'block' : 'none';
+            });
+        }
+
+        // ============================================================
+        // GESTION ENTÊTE GÉNÉRALE (IMAGE)
+        // ============================================================
+        const hasEnteteGenerale = document.getElementById('hasEnteteGenerale');
+        const champsEnteteStandard = ['pays', 'directionDepartementale', 'etablissement', 'anneeScolaire'];
+
+        function toggleEnteteGenerale() {
+            if (!hasEnteteGenerale) return;
+            const actif = hasEnteteGenerale.checked;
+
+            champsEnteteStandard.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.disabled = actif;
+                const wrapper = el.closest('.col-md-6, .col-md-4, .col-12');
+                if (wrapper) {
+                    wrapper.style.opacity = actif ? '0.4' : '1';
+                    wrapper.style.pointerEvents = actif ? 'none' : 'auto';
+                }
+            });
+
+            const logoChk = document.getElementById('hasLogoEtablissement');
+            if (logoChk && actif) {
+                logoChk.checked = false;
+                const cfg = document.getElementById('logoConfig');
+                if (cfg) cfg.style.display = 'none';
+            }
+
+            let info = document.getElementById('enteteInfo');
+            if (actif) {
+                if (!info) {
+                    info = document.createElement('div');
+                    info.id = 'enteteInfo';
+                    info.className = 'alert alert-warning mt-2 mb-0 small';
+                    info.innerHTML = '<i class="fas fa-info-circle"></i> Les champs Pays, Direction, Établissement et Année scolaire sont désactivés. Le thème de l\'animation reste éditable.';
+                    hasEnteteGenerale.closest('.sub-section').appendChild(info);
+                }
+            } else if (info) {
+                info.remove();
+            }
+        }
+
+        if (hasEnteteGenerale) {
+            hasEnteteGenerale.addEventListener('change', () => {
+                toggleEnteteGenerale();
+                sauvegarderDonnees();
+            });
+            toggleEnteteGenerale();
+        }
+
+        // ============================================================
+        // GÉNÉRATION DU PROMPT — FICHE PÉDAGOGIQUE D'ANIMATION (APZ)
+        // ============================================================
+        function genererPrompt() {
+            sauvegarderDonnees();
+            const etablissement = document.getElementById('etablissement').value || "CEG GAMIA";
+            const anneeScolaire = document.getElementById('anneeScolaire').value || "2025-2026";
+            const themeAnimation = document.getElementById('themeAnimation').value || "";
+            const nomAnimateur = document.getElementById('nomAnimateur').value || "";
+            const structureOrganisatrice = document.getElementById('structureOrganisatrice').value || "";
+            const typeAnimation = document.getElementById('typeAnimation').value || "Animation Pédagogique de Zone";
+            const dateAnimation = document.getElementById('dateAnimation').value || "";
+            const lieuAnimation = document.getElementById('lieuAnimation').value || "";
+            const constatsTerrain = document.getElementById('constatsTerrain').value || "";
+            const referencesProgrammes = document.getElementById('referencesProgrammes').value || "";
+            const objectifGeneral = document.getElementById('objectifGeneral').value || "";
+            const objectifAxe1 = document.getElementById('objectifAxe1').value || "";
+            const objectifAxe2 = document.getElementById('objectifAxe2').value || "";
+            const objectifAxe3 = document.getElementById('objectifAxe3').value || "";
+            const situationDepart = document.getElementById('situationDepart').value || "";
+            const tache = document.getElementById('tache').value || "";
+            const grilleEvaluation = document.getElementById('grilleEvaluation').value || "";
+            const themesProchains = document.getElementById('themesProchains').value || "";
+            const annexeClarifications = document.getElementById('annexeClarifications').value || "";
+            const annexeOutilsAnalyse = document.getElementById('annexeOutilsAnalyse').value || "";
+            const annexeGrillesInterpretation = document.getElementById('annexeGrillesInterpretation').value || "";
+            const annexeDonneesExperimentales = document.getElementById('annexeDonneesExperimentales').value || "";
+            const annexeExemplesGraphiques = document.getElementById('annexeExemplesGraphiques').value || "";
+
+            const nbActivites = parseInt(document.getElementById('nbActivites').value) || 4;
+
+            const activites = [];
+            for (let i = 1; i <= nbActivites; i++) {
+                const titre = document.getElementById('activite' + i + 'Titre')?.value || "";
+                const support = document.getElementById('activite' + i + 'Support')?.value || "";
+                const duree = document.getElementById('activite' + i + 'Duree')?.value || "";
+                const consignes = document.getElementById('activite' + i + 'Consignes')?.value || "";
+                const strategies = getSelectedStrategies('act', i);
+                if (titre || support || duree || consignes || strategies.length > 0) {
+                    activites.push({ titre, support, duree, consignes, strategies });
+                }
+            }
+
+            const chrono = [];
+            for (let i = 1; i <= nbActivites; i++) {
+                const horaire = document.getElementById('chro' + i + 'Horaire')?.value || "";
+                const titre = document.getElementById('activite' + i + 'Titre')?.value || "";
+                chrono.push({ horaire, titre });
+            }
+            
+            const pays = (document.getElementById('pays').value || "RÉPUBLIQUE DU BÉNIN").toUpperCase();
+            const directionDepartementale = (document.getElementById('directionDepartementale').value || "DIRECTION DÉPARTEMENTALE DES ENSEIGNEMENTS SECONDAIRES, TECHNIQUES ET DE LA FORMATION PROFESSIONNELLE").toUpperCase();
+            
+            const lFont = document.getElementById('latexFont').value;
+            const lSize = document.getElementById('latexFontSize').value;
+            const lColor = document.getElementById('latexColor').value;
+            const lMarges = document.getElementById('latexMarges').value;
+            const lRule = document.getElementById('latexRuleWidth').value;
+            const lPageNum = document.getElementById('latexPageNumber').value;
+            const lWatermark = document.getElementById('latexWatermark').value;
+            const lTwoCols = document.getElementById('latexTwoColumns').checked;
+            const lSpacing = document.getElementById('latexLineSpacing').value;
+            
+            const hasEntete = document.getElementById('hasEnteteGenerale')?.checked || false;
+
+            const hasLogo = document.getElementById('hasLogoEtablissement').checked;
+            const logoFileName = document.getElementById('logoFileName').value || 'logo.png';
+            const logoSize = document.getElementById('logoSize').value;
+            let logoSizeTexte = '';
+            if (logoSize === 'small') logoSizeTexte = 'width=1.5cm';
+            else if (logoSize === 'medium') logoSizeTexte = 'width=2.5cm';
+            else if (logoSize === 'large') logoSizeTexte = 'width=3.5cm';
+            else if (logoSize === 'custom') {
+                const customSize = document.getElementById('logoCustomSize').value || '2cm';
+                logoSizeTexte = customSize.includes('=') ? customSize : 'width=' + customSize;
+            }
+
+            let logoPromptInstruction = '';
+            if (hasLogo && !hasEntete) {
+                logoPromptInstruction = `
+
+--- LOGO DE L'ÉTABLISSEMENT ---
+L'établissement dispose d'un logo/timbre. Tu dois :
+1. Inclure le fichier image "${logoFileName}" dans l'en-tête de la fiche.
+2. Utiliser \\includegraphics[${logoSizeTexte}]{${logoFileName}} pour insérer le logo.
+3. Positionner le logo de manière ÉLÉGANTE et PROFESSIONNELLE dans le cartouche :
+   - Placer le logo à GAUCHE du cartouche.
+   - Utiliser un \\begin{minipage} ou un \\begin{tabularx} avec 3 colonnes : logo | informations centrales | (optionnel) vide.
+   - Le logo ne doit pas chevaucher le texte ni les bordures.
+4. Exemple de structure recommandée :
+   \\begin{minipage}[c]{0.15\\textwidth}
+     \\centering
+     \\includegraphics[${logoSizeTexte}]{${logoFileName}}
+   \\end{minipage}%
+   \\begin{minipage}[c]{0.85\\textwidth}
+     \\centering
+     ... (le reste du cartouche)
+   \\end{minipage}
+5. Adapter les proportions pour que l'ensemble reste harmonieux.`;
+            }
+
+            let infosFiche = '';
+            if (hasEntete) {
+                infosFiche = `ÉTABLISSEMENT : entête générale fournie via image (voir consignes LaTeX ci-dessous)
+Année scolaire : ${anneeScolaire}${themeAnimation ? `\nThème de l'animation : ${themeAnimation}` : ''}${nomAnimateur ? `\nAnimateur de la séance : ${nomAnimateur}` : ''}${structureOrganisatrice ? `\nStructure organisatrice : ${structureOrganisatrice}` : ''}
+Type d'animation : ${typeAnimation}${dateAnimation ? `\nDate : ${dateAnimation}` : ''}${lieuAnimation ? `\nLieu : ${lieuAnimation}` : ''}`;
+            } else {
+                infosFiche = `PAYS : ${pays}
+DIRECTION DÉPARTEMENTALE : ${directionDepartementale}
+ÉTABLISSEMENT : ${etablissement}
+Année scolaire : ${anneeScolaire}${themeAnimation ? `\nThème de l'animation : ${themeAnimation}` : ''}${nomAnimateur ? `\nAnimateur de la séance : ${nomAnimateur}` : ''}${structureOrganisatrice ? `\nStructure organisatrice : ${structureOrganisatrice}` : ''}
+Type d'animation : ${typeAnimation}${dateAnimation ? `\nDate : ${dateAnimation}` : ''}${lieuAnimation ? `\nLieu : ${lieuAnimation}` : ''}
+${hasLogo ? `Logo établissement : ${logoFileName} (taille : ${logoSizeTexte})` : 'Logo établissement : Aucun'}`;
+            }
+
+            let enteteLatexInstruction = '';
+            if (hasEntete) {
+                enteteLatexInstruction = `L'établissement utilise une entête générale officielle fournie sous forme d'image.
+
+CONSIGNES IMPÉRATIVES :
+1. En TOUT DÉBUT du document (juste après \\begin{document}), insérer l'image d'entête sur TOUTE la largeur de la page, avec une hauteur digne d'une entête officielle de document :
+   \\begin{center}
+       \\includegraphics[width=\\linewidth,height=3.5cm,keepaspectratio=false]{entete.png}
+   \\end{center}
+   OU, si la hauteur n'est pas fixée, utiliser width=\\linewidth uniquement et laisser le ratio d'origine.
+   La largeur doit couvrir TOUTE la largeur utile de la page (\\linewidth).
+2. NE PAS insérer de cartouche Pays / Direction / Établissement / Année scolaire.
+3. Juste SOUS l'image entete.png, ajouter uniquement :
+   - Une ligne centrée : "Année scolaire : ${anneeScolaire}" en gras.
+   - Une ligne centrée : "${typeAnimation} DU ${dateAnimation || '...'}" en gras.
+   - Une ligne centrée : "DISCIPLINE : PCT" en gras.
+   - Une ligne horizontale (\\rule{0.9\\linewidth}{${lRule}}) de séparation.
+   - Le tableau du thème (si fourni) : "${themeAnimation}" en gras.
+4. NE PAS ajouter de logo établissement supplémentaire.
+5. L'image d'entête doit être VISUELLEMENT PROÉMINENTE et placée tout en haut de la première page, sans marge excessive avant.`;
+            }
+
+            let point4Entete = '';
+            if (hasEntete) {
+                point4Entete = `4. EN-TÊTE : ${enteteLatexInstruction}`;
+            } else {
+                point4Entete = `4. EN-TÊTE (CARTOUCHE OFFICIEL) : Créer un cartouche professionnel en respectant STRICTEMENT cette disposition :
+   - Le LIBELLÉ DU PAYS (${pays}) doit être placé EN HAUT À GAUCHE.
+   - La DIRECTION DÉPARTEMENTALE (${directionDepartementale}) doit être placée EN HAUT À DROITE.
+   - Utiliser un \\begin{tabularx}{\\linewidth}{@{}X r@{}} pour aligner le pays à gauche et la direction départementale à droite sur la même ligne.
+   - Puis centrer en dessous le nom de l'établissement, l'année scolaire et le type d'animation.
+   - Ajouter également (si renseignés) : structure organisatrice, animateur, date et lieu.
+   ${hasLogo ? `   - INSÉRER LE LOGO "${logoFileName}" DANS LE CARTOUCHE de manière élégante et professionnelle.` : '   - Aucun logo à insérer.'}
+   
+   Exemple de structure à reproduire :
+   \\begin{center}
+   \\begin{tabularx}{\\linewidth}{@{}X r@{}}
+   {\\small \\textbf{${pays}}} & {\\small \\textbf{${directionDepartementale}}} \\\\
+   \\end{tabularx}\\\\[4pt]
+   {\\Large \\textbf{${etablissement}} \\\\ [2pt]}
+   {\\textbf{Année scolaire : ${anneeScolaire}} \\\\ [2pt]}
+   {\\textbf{${typeAnimation} DU ${dateAnimation || '...'}} \\\\ [2pt]}
+   {\\rule{0.9\\linewidth}{${lRule}}}
+   \\end{center}`;
+            }
+
+            const caracteristiquesContexte = `
+--- CARACTÉRISTIQUES DU CONTEXTE (APPROCHE PAR COMPÉTENCES) ---
+Lors de la rédaction du contexte de la situation-problème, tu dois impérativement respecter les 6 caractéristiques suivantes :
+
+1. LA NARRATIVITÉ : Le texte doit présenter une courte histoire ou un récit mettant en scène des acteurs dans une situation concrète et réaliste.
+2. LE CARACTÈRE PROBLÉMATIQUE : Le contexte expose un défi, un manque, une contradiction, un besoin ou une question à résoudre.
+3. L'AUTHENTICITÉ : Le contexte décrit une situation vraisemblable, ancrée dans le réel ou dans le milieu de vie de l'apprenant.
+4. LA SOBRIÉTÉ : Le texte doit être CONCIS et DÉPOURVU DE DÉTAILS INUTILES.
+5. LA NEUTRALITÉ INJONCTIVE : Le contexte est PUREMENT DESCRIPTIF. Ni consignes, ni questions.
+6. L'OUVERTURE : Le texte doit nécessiter le recours aux supports pour être compris et résolu.`;
+
+            const connaissances = document.getElementById('connaissances').value || "";
+            const contexte = document.getElementById('contexte').value || "";
+            const support = document.getElementById('support').value || "";
+            const supportSchema = document.getElementById('supportSchema')?.checked || false;
+
+            let imagesSimpleStr = '';
+            if (document.getElementById('hasImagesSimple').checked) {
+                const dataSimple = getImageData('simple');
+                imagesSimpleStr = formatImageDataForPrompt(dataSimple, 'IMAGES DE LA FICHE');
+            }
+
+            let chronoStr = '';
+            if (chrono.length > 0) {
+                chronoStr = `\n--- CHRONOGRAMME DE LA SÉANCE ---\n`;
+                chrono.forEach((c, idx) => {
+                    chronoStr += `Ligne ${idx + 1} : Horaire "${c.horaire}" — Titre "${c.titre}"\n`;
+                });
+                chronoStr += `Présenter ce chronogramme sous forme de TABLEAU LaTeX à 2 colonnes (Horaires | Activités). Les titres sont repris depuis les activités détaillées.`;
+            }
+
+            let activitesStr = '';
+            if (activites.length > 0) {
+                activitesStr = `\n--- ACTIVITÉS DÉTAILLÉES ---\n`;
+                activites.forEach((a, idx) => {
+                    const stratStr = a.strategies.length > 0 ? a.strategies.join(', ') : 'Aucune';
+                    activitesStr += `Activité ${idx + 1} : Titre "${a.titre}" — Support "${a.support}" — Durée "${a.duree}" — Stratégies "${stratStr}"\n`;
+                    if (a.strategies.length > 0 && a.duree) {
+                        activitesStr += `   → Ventilation de la durée : ${ventilerDuree(a.duree, a.strategies)}\n`;
+                    }
+                    if (a.consignes) {
+                        const list = a.consignes.split(';').map(s => s.trim()).filter(s => s);
+                        activitesStr += `  Consignes (numérotées) : ${list.join(' | ')}\n`;
+                    }
+                });
+                activitesStr += `Présenter chaque activité avec : son titre, son support, la durée ventilée sur les stratégies, puis une liste numérotée de consignes au format X.1, X.2, X.3 (où X est le numéro de l'activité).`;
+            }
+
+            let objectifsStr = '';
+            if (objectifGeneral || objectifAxe1 || objectifAxe2 || objectifAxe3) {
+                objectifsStr = `\n--- OBJECTIFS DE L'ANIMATION ---`;
+                if (objectifGeneral) objectifsStr += `\nObjectif général : ${objectifGeneral}`;
+                if (objectifAxe1) objectifsStr += `\nAxe 1 (maîtrise didactique et technique) : ${objectifAxe1}`;
+                if (objectifAxe2) objectifsStr += `\nAxe 2 (exploitation conceptuelle / raisonnement) : ${objectifAxe2}`;
+                if (objectifAxe3) objectifsStr += `\nAxe 3 (évaluation / transfert / remédiation) : ${objectifAxe3}`;
+            }
+
+            let contexteJustifStr = '';
+            if (constatsTerrain || referencesProgrammes) {
+                contexteJustifStr = `\n--- CONTEXTE ET JUSTIFICATION ---`;
+                if (constatsTerrain) contexteJustifStr += `\nConstats de terrain / Difficultés des apprenants : ${constatsTerrain}`;
+                if (referencesProgrammes) contexteJustifStr += `\nRéférences aux programmes / curriculaires : ${referencesProgrammes}`;
+            }
+
+            let situationDepartStr = '';
+            if (situationDepart) {
+                situationDepartStr = `\n--- SITUATION DE DÉPART ---\n${situationDepart}`;
+            }
+
+            let tacheStr = '';
+            if (tache) {
+                tacheStr = `\n--- TÂCHE GÉNÉRALE ---\n${tache}`;
+            }
+
+            let evaluationFormationStr = '';
+            if (grilleEvaluation || themesProchains) {
+                evaluationFormationStr = `\n--- ÉVALUATION DE LA FORMATION ---`;
+                if (grilleEvaluation) evaluationFormationStr += `\nGrille d'évaluation / Points à faire le point : ${grilleEvaluation}`;
+                if (themesProchains) evaluationFormationStr += `\nThèmes proposés pour les prochaines animations : ${themesProchains}`;
+            }
+
+            let annexesStr = '';
+            if (annexeClarifications || annexeOutilsAnalyse || annexeGrillesInterpretation || annexeDonneesExperimentales || annexeExemplesGraphiques) {
+                annexesStr = `\n--- ANNEXES ---`;
+                if (annexeClarifications) annexesStr += `\nClarifications conceptuelles : ${annexeClarifications}`;
+                if (annexeOutilsAnalyse) annexesStr += `\nOutils d'analyse : ${annexeOutilsAnalyse}`;
+                if (annexeGrillesInterpretation) annexesStr += `\nGrilles d'interprétation : ${annexeGrillesInterpretation}`;
+                if (annexeDonneesExperimentales) annexesStr += `\nDonnées expérimentales : ${annexeDonneesExperimentales}`;
+                if (annexeExemplesGraphiques) annexesStr += `\nExemples de graphiques : ${annexeExemplesGraphiques}`;
+            }
+
+            let prompt = `Tu es une intelligence artificielle experte en Physique-Chimie-Technologie (PCT), spécialisée dans la conception de FICHES PÉDAGOGIQUES D'ANIMATION (format APZ — Animation Pédagogique de Zone) pour les formateurs et enseignants du système éducatif béninois selon l'approche par compétences (APC).
+
+Ta tâche est de générer une FICHE PÉDAGOGIQUE D'ANIMATION complète, rigoureuse et directement exploitable en formation d'enseignants, en respectant SCRUPULEUSEMENT la STRUCTURE MODÈLE ci-dessous (ordre et contenu des rubriques), et en respectant les paramètres de mise en forme LaTeX.
+
+${caracteristiquesContexte}
+
+--- INFORMATIONS DE LA FICHE ---
+${infosFiche}
+${contexteJustifStr}
+${objectifsStr}
+${situationDepartStr}
+${tacheStr}
+
+--- CONTENU PÉDAGOGIQUE ---
+Connaissances / Techniques pédagogiques et didactique à apprendre : ${connaissances}
+Contexte (situation-problème de départ) : ${contexte}
+Support / Indices support : ${support}
+${supportSchema ? 'Le support comporte des schémas / figures à intégrer.' : ''}
+
+${activitesStr}
+${chronoStr}
+${evaluationFormationStr}
+${annexesStr}
+
+--- PARAMÈTRES DE MISE EN FORME LATEX (IMPÉRATIFS) ---
+1. STRUCTURE : Document class article, taille ${lSize}${lTwoCols ? ', twocolumn' : ''}.
+2. PACKAGES : inputenc, fontenc, geometry (marges=${lMarges}), amsmath, amssymb, graphicx, xcolor, lastpage, fancyhdr, array, tabularx, enumerate, float, longtable, needspace, tcolorbox, titlesec, colortbl, booktabs${lWatermark !== 'none' ? ', draftwatermark' : ''}.
+3. DESIGN :
+    - Police : ${lFont}.
+    - Couleur d'accent (titres/lignes) : noir pour les titres (soulignés ou encadrés sobres), et ${lColor} uniquement pour les filets de séparation discrets.
+    - Lignes de séparation : épaisseur de ${lRule} (\\hrule).
+    - Espacement : setstretch{${lSpacing}} (package setspace).
+    - Numérotation : ${lPageNum === 'bottom' ? 'Page X sur \\pageref{LastPage} en bas' : lPageNum === 'top' ? 'En haut de page' : 'Désactivée'}.
+    - Filigrane : ${lWatermark !== 'none' ? 'Afficher "' + lWatermark + '" en gris clair' : 'Aucun'}.
+    - AUCUN fond coloré pour les titres : utiliser exclusivement \\underline{...} pour les titres de rubriques, ou des encadrés \\fbox{...} / \\framebox{...} avec bordures fines noires et sans remplissage de couleur.
+    - Les tableaux doivent être en noir et blanc : pas de \\rowcolor coloré, éventuellement \\rowcolor[gray]{0.9} pour un gris très clair neutre uniquement si nécessaire.
+${point4Entete}
+5. GESTION DES IMAGES/SCHÉMAS : `;
+            
+            if (document.getElementById('hasImagesSimple').checked) {
+                prompt += `Inclure les images selon les spécifications suivantes :\n${imagesSimpleStr}\nPour chaque figure, utiliser \\begin{figure}[H] \\centering \\includegraphics[width=...,height=...]{nom_fichier} \\caption{légende} \\end{figure}. Respecter le nom de fichier .png, la disposition et la taille demandées. Pour les dispositions groupées (grille/mosaïque), utiliser des mini-pages ou des sous-figures (subcaption).`;
+            } else {
+                prompt += `Aucune image requise.`;
+            }
+            
+            prompt += `
+6. CONTRAINTES SUPPLÉMENTAIRES :
+    - Le CONTEXTE doit respecter IMPÉRATIVEMENT les 6 caractéristiques énumérées ci-dessus.
+    - Toutes les données numériques sont dans le support, jamais dans les consignes.
+    - Les éléments non renseignés (champs vides du formulaire) doivent être omis de la fiche sans laisser de section vide.
+    - VENTILATION DES DURÉES : lorsqu'une durée totale est associée à plusieurs stratégies (dans les activités détaillées), la ventiler à parts égales entre les stratégies (ex : « 60 min » avec stratégies « TG, TC » donne « 30 min TG + 30 min TC »). Utiliser les règles de ventilation fournies dans les données ci-dessus.
+    - Les consignes des activités doivent être numérotées au format X.1, X.2, X.3 (où X est le numéro de l'activité).
+    - AUCUNE FORME INTERROGATIVE : le document ne contient aucune phrase interrogative ni point d'interrogation. Toute question est reformulée en énoncé déclaratif ou en consigne à l'infinitif ou à l'impératif.
+    - CONTEXTE ET SITUATION DE DÉPART : rédiger chacun de façon COURTE et COMPLÈTE (quelques lignes, sans détail superflu).
+    - AUCUN SAUT DE PAGE : ne pas utiliser \\newpage, \\clearpage ni \\needspace. Le contenu doit s'enchaîner naturellement sans saut de page forcé. Aucun titre ne doit être laissé orphelin en bas de page : régler cela par des espacements naturels et une mise en page compacte.
+    - CHRONOGRAMME : le positionner juste après les OBJECTIFS SPÉCIFIQUES, donc en amont de la SITUATION DE DÉPART, conformément au modèle.
+    - PRÉSENTATION DES ACTIVITÉS : chaque activité est présentée selon le CANEVAS MODÈLE ci-dessous, dans un encadré sobre \\fbox{...} ou \\begin{tabular}{|p{...}|...} en noir et blanc (aucun fond coloré), avec un titre souligné et centré « Activité : Titre ». À l'intérieur, les cinq champs obligatoires du canevas dans cet ordre : Support, Stratégie, Durée, Consignes. Les consignes sont en liste numérotée X.1, X.2, X.3. Espacer nettement les activités entre elles avec des \\vspace{} naturels.
+    - PRÉSENTATION PROFESSIONNELLE DU DOCUMENT : titres de rubriques en majuscules soulignées ou encadrées, numérotation cohérente (I, II, III…), tableaux avec \\renewcommand{\\arraystretch}{1.3}, ligne d'en-tête en gris très clair ou texte gras, alignement et espacements homogènes, aucune page quasi vide, aucun saut de page.
+    - CHAMPS À LIBERTÉ DE CRÉATION : lorsqu'un champ contient la mention « ${LIBRE} », créer soi-même le contenu correspondant conformément aux documents officiels récents de l'APC et des PCT au Bénin.
+${logoPromptInstruction}
+
+--- STRUCTURE MODÈLE À RESPECTER SCRUPULEUSEMENT (DOCUMENT IMPRIMÉ) ---
+La fiche pédagogique d'animation doit suivre EXACTEMENT la structure type suivante (les rubriques non renseignées sont omises) :
+
+. THÈME
+   - Intitulé du thème
+
+. CONTEXTE ET JUSTIFICATION
+   - Constat / problème de départ
+   - Importance du thème
+   - Finalité de l'animation
+
+. OBJECTIF GÉNÉRAL
+
+. OBJECTIFS SPÉCIFIQUES
+   - Axe 1 : Maîtrise didactique et technique
+   - Axe 2 : Exploitation conceptuelle / pédagogique
+   (Axe 3 : Évaluation / transfert / remédiation — uniquement si renseigné)
+
+. CHRONOGRAMME
+   - Horaires
+   - Activités correspondantes
+
+. SITUATION DE DÉPART
+   - Constat de contre-performance
+   - Question de remédiation
+   - Piste pédagogique et didactique
+   - Tâche
+
+. DÉROULEMENT DES ACTIVITÉS
+   Activité : titre
+      - Support
+      - Stratégie
+      - Durée
+      - Consignes
+
+. ANNEXES
+
+--- CANEVAS OBLIGATOIRE DE CHAQUE ACTIVITÉ (À REPRODUIRE FIDÈLEMENT) ---
+Chaque activité est présentée dans un encadré sobre avec le canevas suivant :
+
+Activité : <Titre de l'activité>
+   - Support      : <support saisi>
+   - Stratégie    : <stratégies cochées>
+   - Durée        : <durée ventilée sur les stratégies>
+   - Consignes    : <liste numérotée X.1, X.2, X.3 des consignes>
+
+Le canevas doit être IDENTIQUE pour toutes les activités. Les libellés « Support », « Stratégie », « Durée », « Consignes » sont affichés en gras, alignés, et suivis de deux points.
+
+Règles de fond :
+- Fond = problème professionnel, références curriculaires, concepts, données, difficultés, besoins.
+- Forme = structure, progression, tableaux, numérotation, unités, échelles, supports.
+- Cohérence objectifs → activités → évaluation.
+- AUCUN SAUT DE PAGE FORCÉ dans tout le document.
+
+---
+Génère uniquement le code LaTeX complet de la fiche pédagogique d'animation (format APZ) conforme à cette STRUCTURE MODÈLE et à ce CANEVAS d'activité, sans texte superflu, prêt à être compilé sur Overleaf.`;
+
+            const resultDiv = document.getElementById('promptResult');
+            resultDiv.innerHTML = prompt.replace(/\n/g, '<br>').replace(/ /g, ' ');
+            resultDiv.classList.add('fade-in');
+            setTimeout(() => resultDiv.classList.remove('fade-in'), 300);
+        }
+        
+        function copierPrompt() {
+            const promptText = document.getElementById('promptResult').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                setTimeout(() => btn.innerHTML = originalText, 2000);
+            }).catch(() => {
+                alert('Erreur lors de la copie. Veuillez sélectionner manuellement.');
+            });
+        }
+        
+        function resetForm() {
+            if(confirm("Voulez-vous vraiment réinitialiser tout le formulaire ?")) {
+                document.getElementById('promptForm').reset();
+                localStorage.removeItem(PCT_STORAGE_KEY);
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith(PCT_KEY_PREFIX)) keysToRemove.push(key);
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                
+                document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
+                document.getElementById('promptResult').innerHTML = '<i class="fas fa-info-circle"></i> Formulaire réinitialisé.';
+                if(hasImagesSimple) { imagesSimpleConfig.style.display = 'none'; document.getElementById('imageDetailsSimple').innerHTML = ''; }
+                if(logoConfig) { logoConfig.style.display = 'none'; }
+                if(logoCustomSizeRow) { logoCustomSizeRow.style.display = 'none'; }
+                
+                const nbDefault = parseInt(document.getElementById('nbActivites').value) || 4;
+                genererActivites(nbDefault);
+                genererChronogramme(nbDefault);
+                appliquerPrefillLibre();
+                
+                if (typeof toggleEnteteGenerale === 'function') toggleEnteteGenerale();
+            }
+        }
+
+        // ============================================================
+        // COPIE DU PROMPT SPÉCIAL
+        // ============================================================
+        document.getElementById('btnCopySpecialPrompt').addEventListener('click', function() {
+            const text = document.getElementById('specialPromptText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = this;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                setTimeout(() => btn.innerHTML = originalText, 2000);
+            }).catch(() => {
+                alert('Erreur lors de la copie. Veuillez sélectionner manuellement.');
+            });
+        });
+    </script>
+</body>
+</html>

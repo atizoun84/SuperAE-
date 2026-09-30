@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ===== PWA : Manifest & Meta ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#075e54">
+  <link rel="icon" type="image/png" href="logoapp.png">
+  <link rel="apple-touch-icon" href="logoapp.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+  <title>Programmation - AnimHebdo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      /* Palette aux couleurs de WhatsApp Messenger (Thème clair) */
+      --main-bg-color: #efeae2; /* Arrière-plan style discussion WhatsApp */
+      --primary-blue: #128c7e;  /* Vert principal WhatsApp */
+      --secondary-gray: #ffffff;/* Fond blanc pour les cartes et conteneurs */
+      --dark-text: #111b21;     /* Texte foncé très lisible */
+      --card-shadow: 0 1px 3px rgba(11, 20, 26, 0.12);
+    }
+    body {
+      background-color: var(--main-bg-color);
+      color: var(--dark-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+    }
+    .card {
+      background-color: var(--secondary-gray);
+      box-shadow: var(--card-shadow);
+      border-radius: 8px;
+      border: 1px solid #e9edef;
+      color: var(--dark-text);
+    }
+    .form-control {
+      background-color: #ffffff;
+      border-color: #cccccc;
+      color: var(--dark-text);
+    }
+    .form-control:focus {
+      background-color: #ffffff;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 0.25rem rgba(18, 140, 126, 0.25);
+      color: var(--dark-text);
+    }
+    .btn-primary {
+      background-color: var(--primary-blue);
+      border-color: var(--primary-blue);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background-color: #075e54; /* Vert foncé WhatsApp */
+      border-color: #075e54;
+      color: #ffffff;
+    }
+    .btn-secondary {
+      background-color: #54656f;
+      border-color: #54656f;
+      color: #ffffff;
+    }
+    .btn-secondary:hover {
+      background-color: #3b4a54;
+      border-color: #3b4a54;
+    }
+    .btn-outline-light {
+      color: #128c7e;
+      border-color: #128c7e;
+    }
+    .btn-outline-light:hover {
+      background-color: #128c7e;
+      color: #ffffff;
+    }
+    .list-group-item {
+      background-color: #ffffff;
+      border-color: #e9edef;
+      color: var(--dark-text);
+      cursor: pointer;
+    }
+    .list-group-item:hover {
+      background-color: #f0f2f5;
+    }
+    .list-group-item:nth-child(even) {
+        background-color: #f7f9fa;
+    }
+    .badge.bg-secondary {
+      background-color: var(--primary-blue) !important;
+      color: #ffffff !important;
+      font-weight: bold;
+    }
+    .navbar {
+      background-color: #075e54; /* En-tête vert foncé WhatsApp */
+    }
+    .navbar-brand, .nav-link {
+      color: #ffffff !important;
+    }
+    .nav-link.active {
+      color: #25d366 !important; /* Vert clair d'accentuation WhatsApp */
+      font-weight: bold;
+    }
+    .footer {
+      background-color: #ffffff;
+      color: #54656f;
+      padding: 1rem 0;
+      text-align: center;
+      margin-top: auto;
+      border-top: 1px solid #e9edef;
+    }
+    .modal-content {
+        background-color: #ffffff;
+        color: var(--dark-text);
+    }
+    .modal-header {
+        background-color: #075e54;
+        color: #ffffff;
+    }
+    .modal-header .modal-title {
+        color: #ffffff;
+    }
+    .modal-header .btn-close {
+        filter: invert(1);
+    }
+    .modal-date {
+      color: var(--primary-blue);
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    /* AJOUT : Style pour le message plein écran transparent */
+    .fullscreen-toast {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.35);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .fullscreen-toast.show {
+      opacity: 1;
+    }
+    .fullscreen-toast .toast-message {
+      background: rgba(18, 140, 126, 0.92);
+      color: #ffffff;
+      font-size: 1.4rem;
+      font-weight: 600;
+      padding: 1.2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      max-width: 80%;
+    }
+    /* ===== BOUTON D'INSTALLATION FLOTTANT ===== */
+    #pwaInstallButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+      background-color: #25d366;
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      animation: pulseInstall 2s infinite;
+    }
+    #pwaInstallButton:hover {
+      background-color: #128c7e;
+      transform: scale(1.05);
+    }
+    #pwaInstallButton.show {
+      display: flex;
+    }
+    #pwaInstallButton .icon {
+      font-size: 1.2rem;
+    }
+    @keyframes pulseInstall {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+      50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">AnimHebdo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="config-annee.html">Configuration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="programmation.html">Programmation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="export.html">Export</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="fiche.html">Fiche</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="aide.html">Aide</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5 main-content">
+    <h2 class="text-center mb-4">Programmation pédagogique</h2>
+
+    <div class="card p-4">
+      <div class="mb-4">
+        <div class="d-grid gap-2 mb-2">
+            <button class="btn btn-primary" id="toggleListButton">Afficher la programmation</button> 
+        </div>
+            
+        <div class="d-flex justify-content-between gap-2">
+            <button class="btn btn-secondary btn-sm flex-fill" id="autoProgramButton" style="display:none;">Programmer automatiquement</button>
+            <button class="btn btn-secondary btn-sm flex-fill" id="reProgramButton" style="display:none;">Reprogrammer</button>
+            <button class="btn btn-outline-light btn-sm flex-fill" id="toggleLockButton">🔒 Verrouiller la programmation</button>
+        </div>
+            
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <h5>Gestion des professeurs <span class="badge bg-secondary" id="teacherCount">0</span></h5>
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-sm-6">
+              <input type="text" class="form-control" placeholder="Nom du professeur" id="teacherInput">
+            </div>
+            <div class="col-12 col-sm-6">
+              <input type="tel" class="form-control" placeholder="N° WhatsApp" id="teacherWhatsappInput">
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-secondary flex-fill" type="button" id="addTeacherButton">Ajouter</button>
+              <button class="btn btn-primary flex-fill" type="button" id="viewTeachersButton" style="display:none;" data-bs-toggle="modal" data-bs-target="#teacherListModal">Voir la liste</button>
+            </div>
+          </div>
+          <ul class="list-group" id="teacherList"></ul>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <h5>Importer des thèmes</h5>
+          <div class="input-group mb-2">
+            <input type="file" class="form-control" id="excelFile" accept=".xlsx, .xls">
+            <label for="excelFile" class="input-group-text">Choisir un fichier</label>
+          </div>
+          <small class="form-text text-muted mb-2 d-block">Le fichier Excel doit contenir une colonne nommée "themes".</small>
+          <div class="alert alert-info mt-2" role="alert">
+            <span id="themesCount">0</span> thèmes importés.
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div id="programmationContent" style="display:none;">
+        <div class="alert alert-info" role="alert" id="noWednesdaysMessage" style="display:none;">
+          Aucun mercredi n'a été généré. Veuillez d'abord <a href="config-annee.html">configurer l'année scolaire</a>.
+        </div>
+        <ul class="list-group" id="programmationList">
+          </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="teacherListModal" tabindex="-1" aria-labelledby="teacherListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="teacherListModalLabel">Liste des professeurs</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group" id="modalTeacherList"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="programmationDetailModal" tabindex="-1" aria-labelledby="programmationDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="programmationDetailModalLabel">Détails de l'animation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="modal-date" id="modalDate"></h6>
+                <hr>
+                <div class="mb-3">
+                    <strong>Thème :</strong>
+                    <p id="modalTheme"></p>
+                </div>
+                <div class="mb-3">
+                    <strong>Animateur principal :</strong>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <p id="modalAnimateurPrincipal" class="mb-0"></p>
+                        <button class="btn btn-sm btn-warning" id="editAnimateurPrincipalBtn">Modifier</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <strong>Secrétaire de séance :</strong>
+                    <p id="modalSecretaireSeance"></p>
+                </div>
+                <div class="mb-3">
+                    <strong>Secrétaire adjoint :</strong>
+                    <p id="modalSecretaireAdjoint"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- AJOUT : Conteneur pour le message plein écran transparent -->
+  <div class="fullscreen-toast" id="fullscreenToast">
+    <div class="toast-message" id="fullscreenToastMessage"></div>
+  </div>
+
+  <footer class="footer mt-auto">
+    <div class="container">
+      <p>Conçu par Atizoun Plateny AMOUSSOU | <a href="mailto:atizoun@gmail.com">atizoun@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    const programmationList = document.getElementById('programmationList');
+    const noWednesdaysMessage = document.getElementById('noWednesdaysMessage');
+    const toggleListButton = document.getElementById('toggleListButton');
+    const autoProgramButton = document.getElementById('autoProgramButton');
+    const teacherInput = document.getElementById('teacherInput');
+    const teacherWhatsappInput = document.getElementById('teacherWhatsappInput');
+    const addTeacherButton = document.getElementById('addTeacherButton');
+    const teacherList = document.getElementById('teacherList');
+    const excelFile = document.getElementById('excelFile');
+    const themesCountSpan = document.getElementById('themesCount');
+    const teacherCountSpan = document.getElementById('teacherCount');
+    const viewTeachersButton = document.getElementById('viewTeachersButton');
+    const modalTeacherList = document.getElementById('modalTeacherList');
+    
+    // Nouveaux éléments pour la modale de détails
+    const programmationDetailModal = new bootstrap.Modal(document.getElementById('programmationDetailModal'));
+    const modalDate = document.getElementById('modalDate');
+    const modalTheme = document.getElementById('modalTheme');
+    const modalAnimateurPrincipal = document.getElementById('modalAnimateurPrincipal');
+    const modalSecretaireSeance = document.getElementById('modalSecretaireSeance');
+    const modalSecretaireAdjoint = document.getElementById('modalSecretaireAdjoint');
+    
+    // Boutons de programmation
+    const reProgramButton = document.getElementById('reProgramButton');
+    const toggleLockButton = document.getElementById('toggleLockButton');
+    let isLocked = false; 
+
+    let themes = {};
+    let teachers = [];
+    let importedThemes = [];
+    let generatedWednesdays = []; 
+    // AJOUT : Stocker le dernier décalage utilisé pour une rotation plus décalée au prochain re-programmation
+    let lastApOffset = 0; 
+    
+    // AJOUT : Stocker la date actuellement affichée dans la modale
+    let currentModalDate = null;
+
+    // AJOUT : Éléments du message plein écran transparent
+    const fullscreenToast = document.getElementById('fullscreenToast');
+    const fullscreenToastMessage = document.getElementById('fullscreenToastMessage');
+    let fullscreenToastTimeout = null;
+
+    // AJOUT : Fonction d'affichage du message plein écran transparent
+    function showFullscreenToast(message) {
+        fullscreenToastMessage.textContent = message;
+        fullscreenToast.classList.add('show');
+        if (fullscreenToastTimeout) clearTimeout(fullscreenToastTimeout);
+        fullscreenToastTimeout = setTimeout(() => {
+            fullscreenToast.classList.remove('show');
+        }, 1600);
+    }
+
+    const formatter = new Intl.DateTimeFormat('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    function getFormattedDate(dateStr) {
+        if (!dateStr) return '';
+        const dateObj = new Date(dateStr + 'T12:00:00');
+        const formattedDate = formatter.format(dateObj);
+        return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    // Helper pour récupérer le nom d'un enseignant qu'il soit un objet ou une string
+    function getTeacherName(t) {
+        if (!t) return '';
+        return typeof t === 'object' ? t.name : t;
+    }
+    
+    // Vérifie l'état de verrouillage au chargement
+    function checkLockState() {
+        const savedLockState = localStorage.getItem('animhebdoLockState');
+        if (savedLockState === 'locked') {
+            lockProgramming(true); 
+        }
+    }
+
+    function loadData() {
+        const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
+        const savedThemes = JSON.parse(localStorage.getItem('animhebdoThemes'));
+        const savedTeachers = JSON.parse(localStorage.getItem('animhebdoTeachers'));
+        const savedImportedThemes = JSON.parse(localStorage.getItem('animhebdoImportedThemes'));
+        // AJOUT : Récupère le dernier offset si sauvegardé
+        const savedOffset = localStorage.getItem('animhebdoApOffset');
+
+
+        if (savedThemes) themes = savedThemes;
+        if (savedTeachers) teachers = savedTeachers;
+        if (savedImportedThemes) importedThemes = savedImportedThemes;
+        if (savedOffset) lastApOffset = parseInt(savedOffset, 10);
+
+        updateTeacherCount();
+        updateThemesCount();
+        
+        generatedWednesdays = savedData ? savedData.generatedWednesdays : [];
+
+        if (generatedWednesdays && generatedWednesdays.length > 0) {
+            renderList(generatedWednesdays);
+            noWednesdaysMessage.style.display = 'none';
+            
+            // Logique d'affichage des boutons de programmation (Programmer vs Reprogrammer)
+            if (Object.keys(themes).length === 0) {
+                autoProgramButton.style.display = 'block';
+                reProgramButton.style.display = 'none';
+            } else {
+                autoProgramButton.style.display = 'none';
+                reProgramButton.style.display = 'block';
+            }
+        } else {
+            noWednesdaysMessage.style.display = 'block';
+            autoProgramButton.style.display = 'none';
+            reProgramButton.style.display = 'none';
+        }
+        
+        checkLockState(); 
+    }
+
+    function renderList(mercredis) {
+        programmationList.innerHTML = '';
+        
+        mercredis.forEach(dateStr => {
+            const formattedDate = getFormattedDate(dateStr);
+            const savedTheme = themes[dateStr] ? themes[dateStr].theme : 'Thème non assigné';
+
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex flex-column flex-md-row justify-content-between align-items-center mb-2';
+            li.dataset.date = dateStr;
+            li.dataset.bsToggle = 'modal';
+            li.dataset.bsTarget = '#programmationDetailModal';
+            
+            li.innerHTML = `
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h6 class="my-0">${formattedDate}</h6>
+                    <span class="text-secondary text-end ms-2">${savedTheme}</span>
+                </div>
+            `;
+            
+            li.addEventListener('click', () => {
+                showProgrammationDetailModal(dateStr);
+            });
+
+            programmationList.appendChild(li);
+        });
+    }
+
+    function showProgrammationDetailModal(dateStr) {
+        const data = themes[dateStr];
+        
+        // AJOUT : Stocker la date actuelle
+        currentModalDate = dateStr; 
+        
+        modalDate.textContent = getFormattedDate(dateStr);
+        if (data) {
+            modalTheme.textContent = data.theme || 'Non assigné';
+            modalAnimateurPrincipal.textContent = data.animateurPrincipal || 'Non assigné';
+            modalSecretaireSeance.textContent = data.secretaireSeance || 'Non assigné';
+            modalSecretaireAdjoint.textContent = data.secretaireAdjoint || 'Non assigné';
+        } else {
+            modalTheme.textContent = 'Non assigné';
+            modalAnimateurPrincipal.textContent = 'Non assigné';
+            modalSecretaireSeance.textContent = 'Non assigné';
+            modalSecretaireAdjoint.textContent = 'Non assigné';
+        }
+    }
+
+    // AJOUT : Gestion de la modification manuelle de l'animateur principal
+    document.getElementById('editAnimateurPrincipalBtn').addEventListener('click', () => {
+        if (!currentModalDate || !themes[currentModalDate]) {
+            alert("Veuillez sélectionner une date programmée pour modifier l'animateur.");
+            return;
+        }
+        
+        const currentAnimateur = themes[currentModalDate].animateurPrincipal;
+        
+        const newAnimateur = prompt(`Modifier l'Animateur Principal pour la date du ${getFormattedDate(currentModalDate)}.\n\nNom actuel : ${currentAnimateur}\n\nVeuillez entrer le nouveau nom :`);
+
+        if (newAnimateur && newAnimateur.trim() !== '') {
+            const trimmedName = newAnimateur.trim();
+            
+            // Vérification que le nouveau nom n'est pas déjà secrétaire
+            const data = themes[currentModalDate];
+            if (trimmedName === data.secretaireSeance || trimmedName === data.secretaireAdjoint) {
+                alert("Erreur: L'animateur principal ne peut pas être le Secrétaire de séance ou le Secrétaire adjoint.");
+                return;
+            }
+            
+            // Mise à jour de la donnée et du localStorage
+            themes[currentModalDate].animateurPrincipal = trimmedName;
+            localStorage.setItem('animhebdoThemes', JSON.stringify(themes));
+            
+            // Mise à jour de la modale
+            modalAnimateurPrincipal.textContent = trimmedName;
+            
+            // Mise à jour de la liste principale (nécessaire si l'animateur est affiché ailleurs)
+            renderList(generatedWednesdays); 
+
+            // AJOUT : Message plein écran transparent
+            showFullscreenToast('✅ Animateur principal modifié avec succès !');
+        } else if (newAnimateur !== null) {
+            alert("Le nom ne peut pas être vide.");
+        }
+    });
+    
+
+    function updateTeacherCount() {
+        teacherCountSpan.textContent = teachers.length;
+        if (teachers.length > 0) {
+            viewTeachersButton.style.display = 'inline-block';
+        } else {
+            viewTeachersButton.style.display = 'none';
+        }
+    }
+    
+    function displayTeachersModal() {
+        modalTeacherList.innerHTML = '';
+        if (teachers.length === 0) {
+            modalTeacherList.innerHTML = '<li class="list-group-item">Aucun professeur ajouté.</li>';
+            return;
+        }
+        
+        teachers.forEach((teacher, index) => {
+            const teacherName = getTeacherName(teacher);
+            const teacherWhatsapp = (typeof teacher === 'object' && teacher.whatsapp) ? teacher.whatsapp : '';
+
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.innerHTML = `<strong>${teacherName}</strong>${teacherWhatsapp ? `<br><small class="text-muted">📱 WhatsApp : ${teacherWhatsapp}</small>` : ''}`;
+            li.appendChild(infoDiv);
+
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'btn-group';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-sm btn-warning me-2';
+            editBtn.textContent = 'Modifier';
+            editBtn.addEventListener('click', () => {
+                const newName = prompt(`Modifier le nom pour "${teacherName}" :`, teacherName);
+                if (newName && newName.trim() !== '') {
+                    const newWhatsapp = prompt(`Modifier le numéro WhatsApp pour "${newName.trim()}" :`, teacherWhatsapp);
+                    
+                    // Vérification des doublons
+                    const isDuplicate = teachers.some((t, i) => i !== index && getTeacherName(t).toLowerCase() === newName.trim().toLowerCase());
+                    if (!isDuplicate) {
+                        teachers[index] = { name: newName.trim(), whatsapp: newWhatsapp ? newWhatsapp.trim() : '' };
+                        localStorage.setItem('animhebdoTeachers', JSON.stringify(teachers));
+                        displayTeachersModal();
+                        // AJOUT : Message plein écran transparent
+                        showFullscreenToast('✅ Professeur modifié avec succès !');
+                    } else {
+                        alert('Un professeur avec ce nom existe déjà.');
+                    }
+                }
+            });
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-sm btn-danger';
+            deleteBtn.textContent = 'Supprimer';
+            deleteBtn.addEventListener('click', () => {
+                if (confirm(`Êtes-vous sûr de vouloir supprimer "${teacherName}" ?`)) {
+                    teachers.splice(index, 1);
+                    localStorage.setItem('animhebdoTeachers', JSON.stringify(teachers));
+                    updateTeacherCount();
+                    displayTeachersModal();
+                    // AJOUT : Message plein écran transparent
+                    showFullscreenToast('🗑️ Professeur supprimé avec succès !');
+                }
+            });
+
+            buttonGroup.appendChild(editBtn);
+            buttonGroup.appendChild(deleteBtn);
+            li.appendChild(buttonGroup);
+            modalTeacherList.appendChild(li);
+        });
+    }
+    
+    addTeacherButton.addEventListener('click', function() {
+        const teacherName = teacherInput.value.trim();
+        const teacherWhatsapp = teacherWhatsappInput.value.trim();
+        
+        if (teacherName) {
+            const exists = teachers.some(t => getTeacherName(t).toLowerCase() === teacherName.toLowerCase());
+            if (!exists) {
+                teachers.push({
+                    name: teacherName,
+                    whatsapp: teacherWhatsapp
+                });
+                localStorage.setItem('animhebdoTeachers', JSON.stringify(teachers));
+                updateTeacherCount();
+                teacherInput.value = '';
+                teacherWhatsappInput.value = '';
+                // AJOUT : Message plein écran transparent
+                showFullscreenToast('✅ Professeur ajouté avec succès !');
+            } else {
+                alert('Ce professeur est déjà enregistré.');
+            }
+        } else {
+            alert('Veuillez saisir le nom du professeur.');
+        }
+    });
+
+    viewTeachersButton.addEventListener('click', displayTeachersModal);
+    
+    function updateThemesCount() {
+        themesCountSpan.textContent = importedThemes.length;
+    }
+
+    excelFile.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
+
+            importedThemes = json.map(row => row.themes).filter(theme => theme);
+            localStorage.setItem('animhebdoImportedThemes', JSON.stringify(importedThemes));
+            updateThemesCount();
+            
+            alert(`Fichier importé avec succès ! ${importedThemes.length} thèmes trouvés.`);
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    // Fonction principale pour programmer/reprogrammer
+    function performProgramming(isReprogramming) {
+        if (!generatedWednesdays || generatedWednesdays.length === 0) {
+            alert("Veuillez d'abord générer les mercredis sur la page de configuration.");
+            return;
+        }
+        
+        if (importedThemes.length === 0) {
+            alert("Veuillez d'abord importer une liste de thèmes.");
+            return;
+        }
+
+        if (teachers.length < 3) {
+            alert("Veuillez ajouter au moins 3 professeurs pour la programmation.");
+            return;
+        }
+        
+        const mercredis = generatedWednesdays;
+        const teacherCount = teachers.length;
+
+        let initialOffset;
+        if (isReprogramming) {
+            // LOGIQUE DE REPROGRAMMATION : Décalage de l'index initial par rapport au dernier offset
+            initialOffset = (lastApOffset + 1) % teacherCount;
+            // Si on a fait un tour complet, on réinitialise à 0 pour éviter un nombre trop grand
+            if (initialOffset === 0) {
+                lastApOffset = 0;
+            } else {
+                lastApOffset = initialOffset;
+            }
+        } else {
+            // Première programmation : commence toujours à 0 (ou un offset par défaut)
+            initialOffset = 0;
+            lastApOffset = 0;
+        }
+
+        localStorage.setItem('animhebdoApOffset', lastApOffset);
+
+        // Les index de départ sont décalés par rapport au nouvel offset
+        let apIndex = initialOffset;
+        let ssIndex = (initialOffset + 1) % teacherCount;
+        let saIndex = (initialOffset + 2) % teacherCount;
+        
+        // La rotation des thèmes reste séquentielle
+        let themeIndex = 0; 
+        
+        themes = {}; // Réinitialise les thèmes pour la nouvelle programmation
+        
+        mercredis.forEach(date => {
+            const currentTheme = importedThemes[themeIndex % importedThemes.length];
+            
+            let animateurPrincipal = getTeacherName(teachers[apIndex % teacherCount]);
+            let secretaireSeance = getTeacherName(teachers[ssIndex % teacherCount]);
+            let secretaireAdjoint = getTeacherName(teachers[saIndex % teacherCount]);
+
+            // Ajustements pour éviter le même professeur dans deux rôles sur une même date
+            
+            /* -- LOGIQUE DE VÉRIFICATION ANTI-DOUBLON (conservée) -- */
+            if (secretaireSeance === animateurPrincipal) {
+                ssIndex = (ssIndex + 1) % teacherCount;
+                secretaireSeance = getTeacherName(teachers[ssIndex % teacherCount]);
+            }
+            if (secretaireAdjoint === animateurPrincipal || secretaireAdjoint === secretaireSeance) {
+                saIndex = (saIndex + 1) % teacherCount;
+                secretaireAdjoint = getTeacherName(teachers[saIndex % teacherCount]);
+                if (secretaireAdjoint === animateurPrincipal || secretaireAdjoint === secretaireSeance) {
+                    saIndex = (saIndex + 1) % teacherCount;
+                    secretaireAdjoint = getTeacherName(teachers[saIndex % teacherCount]);
+                }
+            }
+            /* ---------------------------------------------------- */
+
+
+            themes[date] = {
+                theme: currentTheme,
+                animateurPrincipal: animateurPrincipal,
+                secretaireSeance: secretaireSeance,
+                secretaireAdjoint: secretaireAdjoint
+            };
+
+            // Incrémentation pour la date suivante
+            apIndex = (apIndex + 1) % teacherCount;
+            ssIndex = (ssIndex + 1) % teacherCount;
+            saIndex = (saIndex + 1) % teacherCount;
+            themeIndex++;
+        });
+        
+        localStorage.setItem('animhebdoThemes', JSON.stringify(themes));
+        renderList(mercredis);
+        
+        // AFFINEMENT FONCTIONNEL : Bascule vers le bouton "Reprogrammer" après la première exécution
+        autoProgramButton.style.display = 'none';
+        reProgramButton.style.display = 'block';
+        
+        alert(`✅ Programmation terminée ! (Décalage de départ: ${getTeacherName(teachers[initialOffset]) || 'Professeur 1'})`);
+    }
+
+    // Écouteurs pour autoProgramButton et reProgramButton
+    autoProgramButton.addEventListener('click', () => performProgramming(false));
+    reProgramButton.addEventListener('click', () => performProgramming(true));
+    
+    // Fonction de verrouillage/déverrouillage
+    function lockProgramming(initialLoad = false) {
+        if (!initialLoad) {
+            // AJOUT : Confirmation par le code 11984 avant verrouillage/déverrouillage
+            const code = prompt("Veuillez saisir le code de confirmation pour verrouiller/déverrouiller la programmation :");
+            if (code !== "11984") {
+                alert("Code incorrect. Action annulée.");
+                return;
+            }
+        }
+
+        isLocked = !initialLoad ? !isLocked : true;
+        
+        // Désactivation/Activation des boutons de programmation
+        autoProgramButton.disabled = isLocked;
+        reProgramButton.disabled = isLocked;
+        
+        if (isLocked) {
+            toggleLockButton.textContent = '🔓 Déverrouiller la programmation';
+            toggleLockButton.classList.remove('btn-outline-light');
+            toggleLockButton.classList.add('btn-danger');
+            if (!initialLoad) localStorage.setItem('animhebdoLockState', 'locked');
+            if (!initialLoad) {
+                // AJOUT : Message plein écran transparent
+                showFullscreenToast('🔒 Programmation verrouillée.');
+            }
+        } else {
+            toggleLockButton.textContent = '🔒 Verrouiller la programmation';
+            toggleLockButton.classList.remove('btn-danger');
+            toggleLockButton.classList.add('btn-outline-light');
+            localStorage.removeItem('animhebdoLockState');
+            if (!initialLoad) {
+                // AJOUT : Message plein écran transparent
+                showFullscreenToast('🔓 Programmation déverrouillée.');
+            }
+        }
+    }
+    
+    // Écouteur pour le bouton de verrouillage
+    toggleLockButton.addEventListener('click', () => lockProgramming(false));
+
+
+    toggleListButton.addEventListener('click', function() {
+        const programmationContent = document.getElementById('programmationContent');
+        if (programmationContent.style.display === 'none') {
+            programmationContent.style.display = 'block';
+            this.textContent = 'Masquer la programmation';
+        } else {
+            programmationContent.style.display = 'none';
+            this.textContent = 'Afficher la programmation';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+
+  <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
+  <button id="pwaInstallButton" type="button" title="Installer l'application">
+    <span class="icon">📲</span>
+    <span class="label">Installer l'appli</span>
+  </button>
+
+  <script>
+  // =====================================================================
+  // PWA - Installation intelligente + Enregistrement du Service Worker
+  // =====================================================================
+
+  // 1) Enregistrement du Service Worker
+  if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+              .then((registration) => {
+                  console.log('✅ Service Worker enregistré :', registration.scope);
+
+                  registration.addEventListener('updatefound', () => {
+                      const newWorker = registration.installing;
+                      if (newWorker) {
+                          newWorker.addEventListener('statechange', () => {
+                              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                  console.log('🔄 Nouvelle version disponible.');
+                              }
+                          });
+                      }
+                  });
+              })
+              .catch((err) => console.error('❌ Échec SW :', err));
+      });
+  }
+
+  // 2) Logique d'installation intelligente
+  (function() {
+      const installBtn = document.getElementById('pwaInstallButton');
+      if (!installBtn) return;
+
+      let deferredPrompt = null;
+
+      // Détection iOS (Safari ne supporte pas beforeinstallprompt)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      // Détection si déjà installée (mode standalone)
+      const isStandalone =
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true;
+
+      // Si déjà installée, on n'affiche rien
+      if (isStandalone) {
+          console.log('✅ Application déjà installée (mode standalone).');
+          return;
+      }
+
+      // Afficher le bouton selon le contexte
+      function showButton() {
+          installBtn.classList.add('show');
+      }
+      function hideButton() {
+          installBtn.classList.remove('show');
+      }
+
+      // --- CAS 1 : Android / Chrome / Edge (beforeinstallprompt supporté) ---
+      window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          showButton();
+      });
+
+      // Clic sur le bouton
+      installBtn.addEventListener('click', async () => {
+          // CAS iOS : instructions manuelles
+          if (isIOS && !deferredPrompt) {
+              alert(
+                  "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                  "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
+                  "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
+                  "3. Appuyez sur « Ajouter ».\n\n" +
+                  "L'application sera installée comme une vraie appli !"
+              );
+              return;
+          }
+
+          // CAS Android : prompt natif
+          if (deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              console.log('Choix utilisateur :', outcome);
+              deferredPrompt = null;
+              hideButton();
+              return;
+          }
+
+          // Cas de secours (navigateur non compatible)
+          alert(
+              "Pour installer l'application :\n\n" +
+              "• Sur Android Chrome : menu ⋮ → « Installer l'application »\n" +
+              "• Sur iPhone Safari : icône Partager ⬆️ → « Sur l'écran d'accueil »"
+          );
+      });
+
+      // --- CAS 2 : iOS Safari (pas de beforeinstallprompt) ---
+      if (isIOS) {
+          // On affiche le bouton après 3 secondes pour ne pas gêner
+          setTimeout(() => showButton(), 3000);
+      }
+
+      // --- CAS 3 : Navigation non compatible (Firefox, etc.) ---
+      // On affiche aussi le bouton après un délai si rien n'a été déclenché
+      setTimeout(() => {
+          if (!installBtn.classList.contains('show') && !isIOS) {
+              // On n'affiche que si l'appli n'est pas déjà installée et si SW supporté
+              if ('serviceWorker' in navigator) {
+                  showButton();
+              }
+          }
+      }, 5000);
+
+      // Masquer définitivement si l'installation a réussi
+      window.addEventListener('appinstalled', () => {
+          console.log('🎉 Application installée !');
+          hideButton();
+          deferredPrompt = null;
+      });
+  })();
+  </script>
+
+</body>
+</html>

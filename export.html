@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ===== PWA : Manifest & Meta ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#075e54">
+  <link rel="icon" type="image/png" href="logoapp.png">
+  <link rel="apple-touch-icon" href="logoapp.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+  <title>Export de la programmation - AnimHebdo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg-color: #f0f2f5;
+      --primary-green: #075e54;
+      --accent-green: #25d366;
+      --secondary-white: #ffffff;
+      --dark-text: #111b21;
+      --muted-text: #667781;
+      --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    body {
+      background-color: var(--main-bg-color);
+      color: var(--dark-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+    }
+    .card {
+      background-color: var(--secondary-white);
+      box-shadow: var(--card-shadow);
+      border-radius: 8px;
+      border: 1px solid #e9edef;
+    }
+    .list-group-item {
+      background-color: var(--secondary-white);
+      border-color: #e9edef;
+      color: var(--dark-text);
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .list-group-item:hover {
+      background-color: #f5f6f6;
+    }
+    .list-group-item:nth-child(even) {
+        background-color: #f9fbfb;
+    }
+    .btn-primary {
+      background-color: var(--primary-green);
+      border-color: var(--primary-green);
+      color: #fff;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background-color: #054c44;
+      border-color: #054c44;
+    }
+    .btn-secondary {
+      background-color: #667781;
+      border-color: #667781;
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      background-color: #52616b;
+      border-color: #52616b;
+    }
+    .navbar {
+      background-color: var(--primary-green);
+    }
+    .navbar-brand, .nav-link {
+      color: #ffffff !important;
+    }
+    .nav-link.active {
+      color: var(--accent-green) !important;
+      font-weight: bold;
+    }
+    .footer {
+      background-color: #ffffff;
+      color: var(--muted-text);
+      padding: 1rem 0;
+      text-align: center;
+      margin-top: auto;
+      border-top: 1px solid #e9edef;
+    }
+    .modal-content {
+        background-color: var(--secondary-white);
+        color: var(--dark-text);
+        border: none;
+    }
+    .modal-header {
+        background-color: var(--primary-green);
+        color: #ffffff;
+    }
+    .modal-header .modal-title {
+        color: #ffffff;
+    }
+    .modal-header .btn-close {
+        filter: invert(1);
+    }
+    .whatsapp-message {
+        white-space: pre-wrap;
+        background-color: #efeae2;
+        padding: 1rem;
+        border-radius: 8px;
+        color: #111b21;
+        border-left: 4px solid var(--accent-green);
+    }
+    .header-text {
+        font-size: 1.2rem;
+        color: var(--dark-text);
+    }
+    /* ===== BOUTON D'INSTALLATION FLOTTANT ===== */
+    #pwaInstallButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+      background-color: #25d366;
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      animation: pulseInstall 2s infinite;
+    }
+    #pwaInstallButton:hover {
+      background-color: #128c7e;
+      transform: scale(1.05);
+    }
+    #pwaInstallButton.show {
+      display: flex;
+    }
+    #pwaInstallButton .icon {
+      font-size: 1.2rem;
+    }
+    @keyframes pulseInstall {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+      50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">AnimHebdo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="config-annee.html">Configuration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="programmation.html">Programmation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="export.html">Export</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="fiche.html">Fiche</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="aide.html">Aide</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5 main-content">
+    <h2 class="text-center mb-4">Export de la programmation</h2>
+
+    <div class="card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Informations de l'établissement</h5>
+            </div>
+        <div class="row header-text">
+            <div class="col-md-6 mb-2">
+                <strong>Année scolaire :</strong> <span id="schoolYear"></span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>Établissement :</strong> <span id="schoolName"></span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>Atelier :</strong> <span id="workshopName"></span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <strong>Animateur d'établissement :</strong> <span id="schoolDirector"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-4">
+        <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-primary" id="copyAllButton">📋 Copier toute la programmation</button>
+        </div>
+        <ul class="list-group" id="exportList">
+            </ul>
+    </div>
+  </div>
+
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message à l'animateur principal</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="whatsappMessage" class="whatsapp-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="copyMessageButton">📋 Copier le message</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <footer class="footer mt-auto">
+    <div class="container">
+      <p>Conçu par Atizoun Plateny AMOUSSOU | <a href="mailto:atizoun@gmail.com" class="text-decoration-none" style="color: var(--primary-green);">atizoun@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Déclarations des éléments DOM
+    const exportList = document.getElementById('exportList');
+    const copyAllButton = document.getElementById('copyAllButton');
+    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+    const whatsappMessage = document.getElementById('whatsappMessage');
+    const copyMessageButton = document.getElementById('copyMessageButton');
+
+    const schoolYearSpan = document.getElementById('schoolYear');
+    const schoolNameSpan = document.getElementById('schoolName');
+    const workshopNameSpan = document.getElementById('workshopName');
+    const schoolDirectorSpan = document.getElementById('schoolDirector');
+
+    let themes = {};
+    let schoolDirector = '';
+    let schoolYear = '';
+    let schoolName = '';
+    let workshopName = '';
+    let teachers = [];
+
+    // Formatters pour les dates
+    const dateTodayFormatter = new Intl.DateTimeFormat('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    const animationDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    function getFormattedDate(dateStr) {
+        if (!dateStr) return '';
+        const dateObj = new Date(dateStr + 'T12:00:00');
+        const formattedDate = animationDateFormatter.format(dateObj);
+        return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+    
+    function getTodayFormattedDate() {
+        const today = new Date();
+        const formattedDate = dateTodayFormatter.format(today);
+        return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    // Fonction principale de chargement des données (appelée au DOMContentLoaded)
+    function loadData() {
+        // Récupération des données les plus récentes du localStorage
+        const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
+        const savedThemes = JSON.parse(localStorage.getItem('animhebdoThemes'));
+        const savedTeachers = JSON.parse(localStorage.getItem('animhebdoTeachers'));
+
+        if (savedData) {
+            schoolDirector = savedData.animateurName || '';
+            schoolName = savedData.etablissementName || '';
+            workshopName = savedData.disciplineAtelier || '';
+            
+            // Calcul de l'année scolaire
+            if (savedData.startDate && savedData.endDate) {
+                const startYear = new Date(savedData.startDate).getFullYear();
+                const endYear = new Date(savedData.endDate).getFullYear();
+                schoolYear = `${startYear} - ${endYear}`;
+            } else {
+                schoolYear = '';
+            }
+        }
+        if (savedThemes) themes = savedThemes;
+        if (savedTeachers) teachers = savedTeachers;
+        
+        // Mise à jour de l'affichage des informations d'établissement
+        schoolDirectorSpan.textContent = schoolDirector;
+        schoolYearSpan.textContent = schoolYear;
+        schoolNameSpan.textContent = schoolName;
+        workshopNameSpan.textContent = workshopName;
+
+        renderList();
+    }
+    
+    // Fonction pour générer la liste de la programmation
+    function renderList() {
+        exportList.innerHTML = '';
+        const mercredis = Object.keys(themes).sort();
+        
+        if (mercredis.length === 0) {
+            exportList.innerHTML = '<li class="list-group-item">Aucune programmation disponible.</li>';
+            copyAllButton.disabled = true;
+            return;
+        }
+
+        mercredis.forEach(dateStr => {
+            const formattedDate = getFormattedDate(dateStr);
+            const savedTheme = themes[dateStr] ? themes[dateStr].theme : 'Thème non assigné';
+
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex flex-column flex-md-row justify-content-between align-items-center mb-2';
+            li.dataset.date = dateStr;
+            
+            li.innerHTML = `
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h6 class="my-0 font-weight-bold" style="color: var(--primary-green);">${formattedDate}</h6>
+                    <span class="text-end ms-2" style="color: var(--dark-text); font-weight: 500;">${savedTheme}</span>
+                </div>
+            `;
+            
+            li.addEventListener('click', () => {
+                showAdminMessageModal(dateStr);
+            });
+
+            exportList.appendChild(li);
+        });
+        copyAllButton.disabled = false;
+    }
+
+    // Fonction pour afficher la modale du message WhatsApp
+    function showAdminMessageModal(dateStr) {
+        const data = themes[dateStr];
+        const formattedDateAnimation = getFormattedDate(dateStr);
+        const formattedDateToday = getTodayFormattedDate();
+        let message = '';
+
+        if (data && data.animateurPrincipal) {
+            const animateurPrincipal = data.animateurPrincipal;
+            const theme = data.theme || 'Thème non assigné';
+            const secretaireSeance = data.secretaireSeance || 'Non assigné';
+            const secretaireAdjoint = data.secretaireAdjoint || 'Non assigné';
+
+            message = `
+*Cher collègue ${animateurPrincipal},*
+
+🗓️ *Objet :* Invitation à la préparation de la prochaine animation pédagogique
+
+Par la présente, je vous informe que l'animation pédagogique du *${formattedDateAnimation}* vous est confiée en tant qu'animateur principal.
+
+🎙️ *Thème :*
+*${theme}*
+
+Les membres de votre équipe sont :
+- *Secrétaire de séance :* ${secretaireSeance}
+- *Secrétaire adjoint :* ${secretaireAdjoint}
+
+L'ensemble du corps enseignant vous souhaite une excellente préparation.
+
+Fait à ${schoolName}, le ${formattedDateToday}
+Cordialement,
+
+*L'AE PRINCIPAL DE PCT,*
+${schoolDirector}
+            `;
+        } else {
+            message = "Désolé, aucune information disponible pour ce thème.";
+        }
+        
+        whatsappMessage.textContent = message.trim();
+        messageModal.show();
+    }
+
+    // Événements
+    copyMessageButton.addEventListener('click', () => {
+        const text = whatsappMessage.textContent;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("✅ Message copié dans le presse-papiers"))
+            .catch(() => alert("❌ Échec de la copie"));
+    });
+
+    copyAllButton.addEventListener('click', () => {
+        let allText = `Programmation Pédagogique - ${schoolYear}\n\n`;
+        const mercredis = Object.keys(themes).sort();
+
+        mercredis.forEach(dateStr => {
+            const formattedDate = getFormattedDate(dateStr);
+            const data = themes[dateStr];
+            const theme = data.theme || 'Thème non assigné';
+            const ap = data.animateurPrincipal || 'Non assigné';
+            const ss = data.secretaireSeance || 'Non assigné';
+            const sa = data.secretaireAdjoint || 'Non assigné';
+
+            allText += `🗓️ ${formattedDate}\n`;
+            allText += `Thème : ${theme}\n`;
+            allText += `Animateur Principal : ${ap}\n`;
+            allText += `Secrétaire de séance : ${ss}\n`;
+            allText += `Secrétaire adjoint : ${sa}\n\n`;
+        });
+
+        navigator.clipboard.writeText(allText.trim())
+            .then(() => alert("✅ Programmation complète copiée dans le presse-papiers"))
+            .catch(() => alert("❌ Échec de la copie"));
+    });
+    
+    // Le chargement des données se fait automatiquement au chargement de la page.
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+
+  <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
+  <button id="pwaInstallButton" type="button" title="Installer l'application">
+    <span class="icon">📲</span>
+    <span class="label">Installer l'appli</span>
+  </button>
+
+  <script>
+  // =====================================================================
+  // PWA - Installation intelligente + Enregistrement du Service Worker
+  // =====================================================================
+
+  // 1) Enregistrement du Service Worker
+  if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+              .then((registration) => {
+                  console.log('✅ Service Worker enregistré :', registration.scope);
+
+                  registration.addEventListener('updatefound', () => {
+                      const newWorker = registration.installing;
+                      if (newWorker) {
+                          newWorker.addEventListener('statechange', () => {
+                              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                  console.log('🔄 Nouvelle version disponible.');
+                              }
+                          });
+                      }
+                  });
+              })
+              .catch((err) => console.error('❌ Échec SW :', err));
+      });
+  }
+
+  // 2) Logique d'installation intelligente
+  (function() {
+      const installBtn = document.getElementById('pwaInstallButton');
+      if (!installBtn) return;
+
+      let deferredPrompt = null;
+
+      // Détection iOS (Safari ne supporte pas beforeinstallprompt)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      // Détection si déjà installée (mode standalone)
+      const isStandalone =
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true;
+
+      // Si déjà installée, on n'affiche rien
+      if (isStandalone) {
+          console.log('✅ Application déjà installée (mode standalone).');
+          return;
+      }
+
+      // Afficher le bouton selon le contexte
+      function showButton() {
+          installBtn.classList.add('show');
+      }
+      function hideButton() {
+          installBtn.classList.remove('show');
+      }
+
+      // --- CAS 1 : Android / Chrome / Edge (beforeinstallprompt supporté) ---
+      window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          showButton();
+      });
+
+      // Clic sur le bouton
+      installBtn.addEventListener('click', async () => {
+          // CAS iOS : instructions manuelles
+          if (isIOS && !deferredPrompt) {
+              alert(
+                  "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                  "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
+                  "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
+                  "3. Appuyez sur « Ajouter ».\n\n" +
+                  "L'application sera installée comme une vraie appli !"
+              );
+              return;
+          }
+
+          // CAS Android : prompt natif
+          if (deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              console.log('Choix utilisateur :', outcome);
+              deferredPrompt = null;
+              hideButton();
+              return;
+          }
+
+          // Cas de secours (navigateur non compatible)
+          alert(
+              "Pour installer l'application :\n\n" +
+              "• Sur Android Chrome : menu ⋮ → « Installer l'application »\n" +
+              "• Sur iPhone Safari : icône Partager ⬆️ → « Sur l'écran d'accueil »"
+          );
+      });
+
+      // --- CAS 2 : iOS Safari (pas de beforeinstallprompt) ---
+      if (isIOS) {
+          // On affiche le bouton après 3 secondes pour ne pas gêner
+          setTimeout(() => showButton(), 3000);
+      }
+
+      // --- CAS 3 : Navigation non compatible (Firefox, etc.) ---
+      // On affiche aussi le bouton après un délai si rien n'a été déclenché
+      setTimeout(() => {
+          if (!installBtn.classList.contains('show') && !isIOS) {
+              // On n'affiche que si l'appli n'est pas déjà installée et si SW supporté
+              if ('serviceWorker' in navigator) {
+                  showButton();
+              }
+          }
+      }, 5000);
+
+      // Masquer définitivement si l'installation a réussi
+      window.addEventListener('appinstalled', () => {
+          console.log('🎉 Application installée !');
+          hideButton();
+          deferredPrompt = null;
+      });
+  })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil - Mercredi Pédago</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- ===== PWA : Manifest & Meta ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#075e54">
+  <link rel="icon" type="image/png" href="logoapp.png">
+  <link rel="apple-touch-icon" href="logoapp.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+
+  <style>
+    :root {
+      --main-bg-color: #e9edef; /* Fond clair officiel WhatsApp */
+      --primary-blue: #00a884;  /* Vert principal WhatsApp moderne */
+      --secondary-gray: #075e54;/* Vert foncé WhatsApp (Nav / Footer) */
+      --dark-text: #111b21;     /* Texte sombre haute lisibilité */
+      --light-text: #ffffff;    /* Texte clair pour éléments foncés */
+      --card-shadow: 0 2px 8px rgba(11, 20, 26, 0.12);
+    }
+    body {
+      background-color: var(--main-bg-color);
+      color: var(--dark-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+    }
+    .card {
+      background-color: #ffffff;
+      color: var(--dark-text);
+      box-shadow: var(--card-shadow);
+      border-radius: 8px;
+      border: none;
+    }
+    .btn-primary {
+      background-color: var(--primary-blue);
+      border-color: var(--primary-blue);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #008f6f;
+      border-color: #008f6f;
+      color: #fff;
+    }
+    .btn-outline-primary {
+      color: var(--primary-blue);
+      border-color: var(--primary-blue);
+    }
+    .btn-outline-primary:hover {
+      background-color: var(--primary-blue);
+      color: #ffffff;
+    }
+    a {
+      text-decoration: none;
+    }
+    .navbar {
+      background-color: var(--secondary-gray);
+    }
+    .navbar-brand, .nav-link {
+      color: var(--light-text) !important;
+    }
+    .nav-link.active {
+      color: #25d366 !important; /* Vert fluo WhatsApp pour la sélection active */
+      font-weight: bold;
+    }
+    .footer {
+      background-color: var(--secondary-gray);
+      color: #d1d7db;
+      padding: 1rem 0;
+      text-align: center;
+      margin-top: auto;
+    }
+    .footer a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    .modal-content {
+      background-color: #ffffff;
+      color: var(--dark-text);
+    }
+    .modal-header {
+      background-color: var(--secondary-gray);
+      color: var(--light-text);
+    }
+    .whatsapp-message {
+      white-space: pre-wrap;
+      color: var(--dark-text);
+      background-color: #f0f2f5;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-blue);
+    }
+
+    /* ===== BOUTON D'INSTALLATION FLOTTANT ===== */
+    #pwaInstallButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+      background-color: #25d366;
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      animation: pulseInstall 2s infinite;
+    }
+    #pwaInstallButton:hover {
+      background-color: #128c7e;
+      transform: scale(1.05);
+    }
+    #pwaInstallButton.show {
+      display: flex;
+    }
+    #pwaInstallButton .icon {
+      font-size: 1.2rem;
+    }
+    @keyframes pulseInstall {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+      50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
+    }
+  </style>
+</head>
+<body>
+  
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">AnimHebdo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="config-annee.html">Configuration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="programmation.html">Programmation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="export.html">Export</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="aide.html">Aide</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="fiche.html">Fiche</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5 main-content">
+    <h2 class="text-center mb-4">Bienvenue dans Mercredi Pédago</h2>
+
+    <div class="card p-4">
+      <h4 class="mb-3">📂 Modules disponibles</h4>
+      <div class="d-grid gap-3">
+        <button id="nextAnimationButton" class="btn btn-outline-primary" style="display: none;">
+          Prochaine animation 🚀
+        </button>
+        <button id="addToCalendarButton" class="btn btn-outline-primary">
+          📅 Ajouter au calendrier du téléphone
+        </button>
+        <a href="config-annee.html" class="btn btn-primary">📅 Configuration de l'année scolaire</a>
+        <a href="programmation.html" class="btn btn-primary">📝 Programmation des thèmes</a>
+        <a href="export.html" class="btn btn-primary">📤 Export des données</a>
+        <a href="aide.html" class="btn btn-primary">❓ Aide & Guide</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Prochaine animation pédagogique</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="whatsappMessage" class="whatsapp-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="copyMessageButton">📋 Copier le message</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <footer class="footer mt-auto">
+    <div class="container">
+      <p>Conçu par Atizoun Plateny AMOUSSOU | <a href="mailto:atizoun@gmail.com">atizoun@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
+  <button id="pwaInstallButton" type="button" title="Installer l'application">
+    <span class="icon">📲</span>
+    <span class="label">Installer l'appli</span>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const nextAnimationButton = document.getElementById('nextAnimationButton');
+    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+    const whatsappMessage = document.getElementById('whatsappMessage');
+    const copyMessageButton = document.getElementById('copyMessageButton');
+
+    let themes = {};
+    let teachers = [];
+    let schoolDirector = '';
+    let schoolName = '';
+
+    const dateTodayFormatter = new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const animationDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    function getFormattedDate(dateStr) {
+      if (!dateStr) return '';
+      const dateObj = new Date(dateStr + 'T12:00:00');
+      const formattedDate = animationDateFormatter.format(dateObj);
+      return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    function getTodayFormattedDate() {
+      const today = new Date();
+      const formattedDate = dateTodayFormatter.format(today);
+      return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    function getNextWednesday(start) {
+        let date = new Date(start);
+        date.setDate(date.getDate() + (3 - date.getDay() + 7) % 7);
+        return date;
+    }
+
+    // Helper pour récupérer le nom d'un enseignant qu'il soit un objet ou une string
+    function getTeacherName(t) {
+        if (!t) return '';
+        return typeof t === 'object' ? t.name : t;
+    }
+
+    // AJOUT : Récupérer le numéro WhatsApp d'un professeur à partir de son nom
+    function getTeacherWhatsapp(teacherName) {
+      if (!teacherName || !teachers || teachers.length === 0) return '';
+      const found = teachers.find(t => getTeacherName(t).toLowerCase() === teacherName.toLowerCase());
+      if (found && typeof found === 'object' && found.whatsapp) {
+        return found.whatsapp;
+      }
+      return '';
+    }
+
+    // AJOUT : Nettoyer le numéro WhatsApp pour l'URL wa.me (garder uniquement les chiffres)
+    function cleanWhatsappNumber(number) {
+      if (!number) return '';
+      return number.replace(/\D/g, '');
+    }
+
+    // AJOUT : Variable pour stocker le numéro WhatsApp de l'animateur actuel
+    let currentAnimateurWhatsapp = '';
+
+    function findNextAnimation() {
+      const sortedDates = Object.keys(themes).sort();
+      const today = new Date();
+      
+      let nextAnimationDate = null;
+      for (const dateStr of sortedDates) {
+        const animationDate = new Date(dateStr);
+        if (animationDate >= today) {
+          nextAnimationDate = dateStr;
+          break;
+        }
+      }
+      return nextAnimationDate;
+    }
+
+    function loadData() {
+      const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
+      const savedThemes = JSON.parse(localStorage.getItem('animhebdoThemes'));
+      const savedTeachers = JSON.parse(localStorage.getItem('animhebdoTeachers'));
+
+      if (savedData) {
+          schoolDirector = savedData.animateurName || 'Non défini';
+          schoolName = savedData.etablissementName || 'Non défini';
+      }
+      if (savedThemes) themes = savedThemes;
+      if (savedTeachers) teachers = savedTeachers;
+      
+      const nextAnimationDate = findNextAnimation();
+      if (nextAnimationDate) {
+        nextAnimationButton.style.display = 'block';
+        nextAnimationButton.dataset.date = nextAnimationDate;
+      }
+    }
+
+    function showAdminMessageModal(dateStr) {
+      const data = themes[dateStr];
+      const formattedDateAnimation = getFormattedDate(dateStr);
+      const formattedDateToday = getTodayFormattedDate();
+      let message = '';
+
+      if (data && data.animateurPrincipal) {
+        const animateurPrincipal = data.animateurPrincipal;
+        const theme = data.theme || 'Thème non assigné';
+        const secretaireSeance = data.secretaireSeance || 'Non assigné';
+        const secretaireAdjoint = data.secretaireAdjoint || 'Non assigné';
+
+        // AJOUT : Récupération du numéro WhatsApp de l'animateur principal
+        currentAnimateurWhatsapp = getTeacherWhatsapp(animateurPrincipal);
+
+        message = `
+*Cher collègue ${animateurPrincipal},*
+
+🗓️ *Objet :* Invitation à la préparation de la prochaine animation pédagogique
+
+Par la présente, je vous informe que l'animation pédagogique du *${formattedDateAnimation}* vous est confiée en tant qu'animateur principal.
+
+🎙️ *Thème :*
+*${theme}*
+
+Les membres de votre équipe sont :
+- *Secrétaire de séance :* ${secretaireSeance}
+- *Secrétaire adjoint :* ${secretaireAdjoint}
+
+L'ensemble du corps enseignant vous souhaite une excellente préparation.
+
+Fait à ${schoolName}, le ${formattedDateToday}
+Cordialement,
+
+*L'AE PRINCIPAL DE PCT,*
+${schoolDirector}
+        `;
+      } else {
+        message = "Désolé, aucune information disponible pour ce thème.";
+        currentAnimateurWhatsapp = '';
+      }
+      
+      whatsappMessage.textContent = message.trim();
+
+      // AJOUT : Adapter le bouton selon la disponibilité du numéro WhatsApp
+      if (currentAnimateurWhatsapp && cleanWhatsappNumber(currentAnimateurWhatsapp)) {
+        copyMessageButton.textContent = '📤 Envoyer le message WhatsApp';
+        copyMessageButton.classList.remove('btn-primary');
+        copyMessageButton.classList.add('btn-success');
+      } else {
+        copyMessageButton.textContent = '📋 Copier le message';
+        copyMessageButton.classList.remove('btn-success');
+        copyMessageButton.classList.add('btn-primary');
+      }
+
+      messageModal.show();
+    }
+
+    nextAnimationButton.addEventListener('click', () => {
+      const date = nextAnimationButton.dataset.date;
+      if (date) {
+        showAdminMessageModal(date);
+      }
+    });
+
+    // AJOUT : Modification du comportement du bouton - Copie ET/OU Envoi WhatsApp
+    copyMessageButton.addEventListener('click', () => {
+        const text = whatsappMessage.textContent;
+
+        // Toujours copier dans le presse-papiers d'abord
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                const cleanedNumber = cleanWhatsappNumber(currentAnimateurWhatsapp);
+                if (cleanedNumber) {
+                    // Si un numéro WhatsApp est disponible, ouvrir WhatsApp avec le message
+                    const whatsappUrl = `https://wa.me/${cleanedNumber}?text=${encodeURIComponent(text)}`;
+                    window.open(whatsappUrl, '_blank');
+                    alert("✅ Message copié et WhatsApp ouvert pour l'envoi !");
+                } else {
+                    alert("✅ Message copié dans le presse-papiers (aucun numéro WhatsApp disponible pour l'animateur).");
+                }
+            })
+            .catch(() => {
+                // En cas d'échec de la copie, tenter quand même l'envoi si possible
+                const cleanedNumber = cleanWhatsappNumber(currentAnimateurWhatsapp);
+                if (cleanedNumber) {
+                    const whatsappUrl = `https://wa.me/${cleanedNumber}?text=${encodeURIComponent(text)}`;
+                    window.open(whatsappUrl, '_blank');
+                    alert("⚠️ La copie a échoué, mais WhatsApp a été ouvert pour l'envoi.");
+                } else {
+                    alert("❌ Échec de la copie du message.");
+                }
+            });
+    });
+
+    // =====================================================================
+    // SOLUTION 2 : Génération d'un fichier .ics avec rappel 4 jours avant
+    // =====================================================================
+
+    const addToCalendarButton = document.getElementById('addToCalendarButton');
+
+    // Formate une Date au format ICS : YYYYMMDDTHHMMSSZ (UTC)
+    function formatIcsDate(date) {
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    }
+
+    // Échappe les caractères spéciaux ICS (retours ligne, virgules, points-virgules)
+    function escapeIcsText(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/\\/g, '\\\\')
+            .replace(/;/g, '\\;')
+            .replace(/,/g, '\\,')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '');
+    }
+
+    // Découpe une longue ligne en lignes de 75 caractères max (règle RFC 5545)
+    function foldIcsLine(line) {
+        if (line.length <= 75) return line;
+        let result = '';
+        let remaining = line;
+        while (remaining.length > 75) {
+            result += remaining.substring(0, 75) + '\r\n ';
+            remaining = remaining.substring(75);
+        }
+        return result + remaining;
+    }
+
+    // Génère le contenu complet du fichier .ics
+    function generateIcsContent() {
+        const now = new Date();
+        const dtstamp = formatIcsDate(now);
+
+        const lines = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//AnimHebdo//Programmation Pedagogique//FR',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-CALNAME:Animations Pédagogiques',
+            'X-WR-TIMEZONE:Africa/Porto-Novo'
+        ];
+
+        const sortedDates = Object.keys(themes).sort();
+
+        sortedDates.forEach((dateStr, index) => {
+            const data = themes[dateStr] || {};
+
+            // Animation prévue à 08h00 heure locale
+            const startDate = new Date(dateStr + 'T08:00:00');
+            // Durée : 2 heures
+            const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+
+            const theme = data.theme || 'Thème non assigné';
+            const animateur = data.animateurPrincipal || 'Non assigné';
+            const secretaire = data.secretaireSeance || 'Non assigné';
+            const secretaireAdj = data.secretaireAdjoint || 'Non assigné';
+
+            // Titre de l'événement
+            const summary = `🎓 Animation : ${theme}`;
+
+            // Description détaillée
+            const description =
+                `Thème : ${theme}\n` +
+                `Animateur principal : ${animateur}\n` +
+                `Secrétaire de séance : ${secretaire}\n` +
+                `Secrétaire adjoint : ${secretaireAdj}`;
+
+            const uid = `anim-${dateStr}-${index}@animhebdo.local`;
+
+            lines.push('BEGIN:VEVENT');
+            lines.push(foldIcsLine(`UID:${uid}`));
+            lines.push(`DTSTAMP:${dtstamp}`);
+            lines.push(`DTSTART:${formatIcsDate(startDate)}`);
+            lines.push(`DTEND:${formatIcsDate(endDate)}`);
+            lines.push(foldIcsLine(`SUMMARY:${escapeIcsText(summary)}`));
+            lines.push(foldIcsLine(`DESCRIPTION:${escapeIcsText(description)}`));
+            lines.push('LOCATION:Salle des professeurs');
+            lines.push('STATUS:CONFIRMED');
+            lines.push('TRANSP:OPAQUE');
+
+            // ---- RAPPEL 1 : 4 JOURS AVANT (P4D) ----
+            lines.push('BEGIN:VALARM');
+            lines.push('TRIGGER:-P4D');
+            lines.push('ACTION:DISPLAY');
+            lines.push(foldIcsLine(`DESCRIPTION:Rappel dans 4 jours : ${escapeIcsText(theme)}`));
+            lines.push('END:VALARM');
+
+            // ---- RAPPEL 2 : 1 HEURE AVANT (PT1H) ----
+            lines.push('BEGIN:VALARM');
+            lines.push('TRIGGER:-PT1H');
+            lines.push('ACTION:DISPLAY');
+            lines.push(foldIcsLine(`DESCRIPTION:Animation pédagogique dans 1 heure : ${escapeIcsText(theme)}`));
+            lines.push('END:VALARM');
+
+            lines.push('END:VEVENT');
+        });
+
+        lines.push('END:VCALENDAR');
+
+        return lines.join('\r\n');
+    }
+
+    // Déclenchement du téléchargement du fichier .ics
+    function downloadIcsFile() {
+        if (!themes || Object.keys(themes).length === 0) {
+            alert("Aucune animation programmée.\nVeuillez d'abord programmer les thèmes dans la page Programmation.");
+            return;
+        }
+
+        const icsContent = generateIcsContent();
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'animations-pedagogiques.ics';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Nettoyage mémoire
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+        // Message d'aide à l'utilisateur
+        const nbEvents = Object.keys(themes).length;
+        setTimeout(() => {
+            alert(
+                `✅ Fichier calendrier généré avec succès !\n\n` +
+                `📅 ${nbEvents} animation(s) avec rappel automatique 4 jours avant.\n\n` +
+                `👉 Étapes suivantes :\n` +
+                `1. Ouvrez le fichier "animations-pedagogiques.ics" qui vient d'être téléchargé.\n` +
+                `2. Votre calendrier (Google, Samsung, iOS…) va proposer d'importer les événements.\n` +
+                `3. Acceptez : les rappels se déclencheront automatiquement, même si AnimHebdo est fermé.\n\n` +
+                `💡 Sur Android : ouvrez le fichier depuis "Fichiers" ou la barre de notifications.\n` +
+                `💡 Sur iPhone : ouvrez-le depuis "Fichiers" puis choisissez "Calendrier".`
+            );
+        }, 300);
+    }
+
+    // Écouteur du bouton
+    if (addToCalendarButton) {
+        addToCalendarButton.addEventListener('click', downloadIcsFile);
+    }
+
+    // =====================================================================
+    // PWA - Installation intelligente + Enregistrement du Service Worker
+    // =====================================================================
+
+    // 1) Enregistrement du Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => {
+                    console.log('✅ Service Worker enregistré :', registration.scope);
+
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🔄 Nouvelle version disponible.');
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch((err) => console.error('❌ Échec SW :', err));
+        });
+    }
+
+    // 2) Logique d'installation intelligente
+    (function() {
+        const installBtn = document.getElementById('pwaInstallButton');
+        if (!installBtn) return;
+
+        let deferredPrompt = null;
+
+        // Détection iOS (Safari ne supporte pas beforeinstallprompt)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        // Détection si déjà installée (mode standalone)
+        const isStandalone =
+            window.matchMedia('(display-mode: standalone)').matches ||
+            window.navigator.standalone === true;
+
+        // Si déjà installée, on n'affiche rien
+        if (isStandalone) {
+            console.log('✅ Application déjà installée (mode standalone).');
+            return;
+        }
+
+        // Afficher le bouton selon le contexte
+        function showButton() {
+            installBtn.classList.add('show');
+        }
+        function hideButton() {
+            installBtn.classList.remove('show');
+        }
+
+        // --- CAS 1 : Android / Chrome / Edge (beforeinstallprompt supporté) ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showButton();
+        });
+
+        // Clic sur le bouton
+        installBtn.addEventListener('click', async () => {
+            // CAS iOS : instructions manuelles
+            if (isIOS && !deferredPrompt) {
+                alert(
+                    "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                    "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
+                    "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
+                    "3. Appuyez sur « Ajouter ».\n\n" +
+                    "L'application sera installée comme une vraie appli !"
+                );
+                return;
+            }
+
+            // CAS Android : prompt natif
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('Choix utilisateur :', outcome);
+                deferredPrompt = null;
+                hideButton();
+                return;
+            }
+
+            // Cas de secours (navigateur non compatible)
+            alert(
+                "Pour installer l'application :\n\n" +
+                "• Sur Android Chrome : menu ⋮ → « Installer l'application »\n" +
+                "• Sur iPhone Safari : icône Partager ⬆️ → « Sur l'écran d'accueil »"
+            );
+        });
+
+        // --- CAS 2 : iOS Safari (pas de beforeinstallprompt) ---
+        if (isIOS) {
+            // On affiche le bouton après 3 secondes pour ne pas gêner
+            setTimeout(() => showButton(), 3000);
+        }
+
+        // --- CAS 3 : Navigation non compatible (Firefox, etc.) ---
+        // On affiche aussi le bouton après un délai si rien n'a été déclenché
+        setTimeout(() => {
+            if (!installBtn.classList.contains('show') && !isIOS) {
+                // On n'affiche que si l'appli n'est pas déjà installée et si SW supporté
+                if ('serviceWorker' in navigator) {
+                    showButton();
+                }
+            }
+        }, 5000);
+
+        // Masquer définitivement si l'installation a réussi
+        window.addEventListener('appinstalled', () => {
+            console.log('🎉 Application installée !');
+            hideButton();
+            deferredPrompt = null;
+        });
+    })();
+
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ===== PWA : Manifest & Meta ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#075e54">
+  <link rel="icon" type="image/png" href="logoapp.png">
+  <link rel="apple-touch-icon" href="logoapp.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+
+  <title>Aide & Guide - Mercredi Pédago</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      /* Palette WhatsApp Messenger (Mode Clair) */
+      --main-bg-color: #efeae2;      /* Fond de conversation WhatsApp */
+      --primary-green: #008069;      /* Vert principal WhatsApp (Header/Nav) */
+      --secondary-green: #128c7e;    /* Vert d'action WhatsApp */
+      --card-bg: #ffffff;           /* Fond blanc pour bulles/cartes */
+      --dark-text: #111b21;          /* Texte principal très foncé pour contraste maximal */
+      --muted-text: #667781;         /* Texte secondaire gris foncé */
+      --card-shadow: 0 1px 3px rgba(11, 20, 26, 0.13);
+    }
+    body {
+      background-color: var(--main-bg-color);
+      color: var(--dark-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+    }
+    .card {
+      background-color: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      border-radius: 8px;
+      border: none;
+      color: var(--dark-text);
+    }
+    .accordion-item {
+      border: 1px solid #e9edef;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    .accordion-button {
+      background-color: var(--card-bg);
+      color: var(--dark-text);
+      font-weight: 600;
+    }
+    .accordion-button:not(.collapsed) {
+      background-color: #e7f7e7;
+      color: var(--primary-green);
+      box-shadow: none;
+    }
+    .accordion-body {
+      background-color: #f0f2f5;
+      color: var(--dark-text);
+    }
+    .description {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 2rem;
+      color: var(--dark-text);
+    }
+    .description h4 {
+      color: var(--primary-green);
+      font-weight: bold;
+    }
+    a {
+      color: var(--secondary-green);
+      text-decoration: underline;
+      font-weight: 500;
+    }
+    a:hover {
+      color: var(--primary-green);
+    }
+    .navbar {
+      background-color: var(--primary-green);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand, .nav-link {
+      color: #ffffff !important;
+    }
+    .nav-link.active {
+      color: #ffffff !important;
+      font-weight: bold;
+      border-bottom: 3px solid #ffffff;
+    }
+    .footer {
+      background-color: #f0f2f5;
+      color: var(--muted-text);
+      padding: 1rem 0;
+      text-align: center;
+      margin-top: auto;
+      border-top: 1px solid #e9edef;
+    }
+
+    /* ===== BOUTON D'INSTALLATION FLOTTANT ===== */
+    #pwaInstallButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+      background-color: #25d366;
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      animation: pulseInstall 2s infinite;
+    }
+    #pwaInstallButton:hover {
+      background-color: #128c7e;
+      transform: scale(1.05);
+    }
+    #pwaInstallButton.show {
+      display: flex;
+    }
+    #pwaInstallButton .icon {
+      font-size: 1.2rem;
+    }
+    @keyframes pulseInstall {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+      50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">AnimHebdo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="config-annee.html">Configuration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="programmation.html">Programmation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="fiche.html">Fiche</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="export.html">Export</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="aide.html">Aide</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5 main-content">
+    <h2 class="text-center mb-4">Aide & Guide d'utilisation</h2>
+
+    <div class="description">
+      <h4>📘 À propos de l'application</h4>
+      <p><strong>Mercredi Pédago</strong> est une application web Android responsive, conçue pour fonctionner entièrement hors ligne. Elle permet aux enseignants et responsables pédagogiques de planifier efficacement les animations du mercredi, en tenant compte des contraintes réelles du calendrier scolaire : jours fériés, devoirs surveillés, animations de zone, etc.</p>
+      <p>Grâce à une interface intuitive et une logique métier robuste, l’utilisateur peut :</p>
+      <ul>
+        <li>📅 Définir la période scolaire et les dates à exclure</li>
+        <li>🧮 Générer automatiquement les mercredis disponibles</li>
+        <li>📝 Associer un thème pédagogique à chaque mercredi</li>
+        <li>💾 Sauvegarder et consulter les données localement, sans connexion</li>
+        <li>📤 Exporter les programmations pour archivage ou partage</li>
+      </ul>
+      <hr>
+      <p><strong>Conception innovante :</strong><br>
+      Cette application est une initiative originale de <strong>Monsieur AMOUSSOU Atizoun Plateny</strong>,<br>
+      <em>Professeur de Physique-Chimie-Technologie (PCT)</em>, passionné par l’ergonomie numérique et la pédagogie active.</p>
+      <p>
+        📧 Email : <a href="mailto:atizoun@gmail.com">atizoun@gmail.com</a><br>
+        📞 Téléphone : 01 97 74 40 35
+      </p>
+    </div>
+
+    <div class="accordion" id="aideAccordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading1">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+            📅 Configuration de l'année scolaire
+          </button>
+        </h2>
+        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#aideAccordion">
+          <div class="accordion-body">
+            Définissez les dates de début et de fin de l’année scolaire. Ajoutez les mercredis à exclure (fêtes, devoirs, animations de zone). Cliquez sur "Générer" pour obtenir les mercredis disponibles.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading2">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+            📝 Programmation des thèmes
+          </button>
+        </h2>
+        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#aideAccordion">
+          <div class="accordion-body">
+            Sélectionnez un mercredi disponible et associez-lui un thème pédagogique. Les données sont enregistrées automatiquement dans l’appareil.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading3">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+            📤 Export des données
+          </button>
+        </h2>
+        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#aideAccordion">
+          <div class="accordion-body">
+            Consultez les thèmes enregistrés au format JSON. Vous pouvez les copier ou les effacer. Une version Excel est en cours de développement.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading4">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+            📱 Utilisation hors ligne
+          </button>
+        </h2>
+        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#aideAccordion">
+          <div class="accordion-body">
+            L’application fonctionne sans connexion. Toutes les données sont stockées localement. Pour réinitialiser, utilisez le bouton dédié dans la configuration.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
+  <button id="pwaInstallButton" type="button" title="Installer l'application">
+    <span class="icon">📲</span>
+    <span class="label">Installer l'appli</span>
+  </button>
+
+  <script>
+  // =====================================================================
+  // PWA - Installation intelligente + Enregistrement du Service Worker
+  // =====================================================================
+
+  // 1) Enregistrement du Service Worker
+  if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+              .then((registration) => {
+                  console.log('✅ Service Worker enregistré :', registration.scope);
+
+                  registration.addEventListener('updatefound', () => {
+                      const newWorker = registration.installing;
+                      if (newWorker) {
+                          newWorker.addEventListener('statechange', () => {
+                              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                  console.log('🔄 Nouvelle version disponible.');
+                              }
+                          });
+                      }
+                  });
+              })
+              .catch((err) => console.error('❌ Échec SW :', err));
+      });
+  }
+
+  // 2) Logique d'installation intelligente
+  (function() {
+      const installBtn = document.getElementById('pwaInstallButton');
+      if (!installBtn) return;
+
+      let deferredPrompt = null;
+
+      // Détection iOS (Safari ne supporte pas beforeinstallprompt)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      // Détection si déjà installée (mode standalone)
+      const isStandalone =
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true;
+
+      // Si déjà installée, on n'affiche rien
+      if (isStandalone) {
+          console.log('✅ Application déjà installée (mode standalone).');
+          return;
+      }
+
+      // Afficher le bouton selon le contexte
+      function showButton() {
+          installBtn.classList.add('show');
+      }
+      function hideButton() {
+          installBtn.classList.remove('show');
+      }
+
+      // --- CAS 1 : Android / Chrome / Edge (beforeinstallprompt supporté) ---
+      window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          showButton();
+      });
+
+      // Clic sur le bouton
+      installBtn.addEventListener('click', async () => {
+          // CAS iOS : instructions manuelles
+          if (isIOS && !deferredPrompt) {
+              alert(
+                  "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                  "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
+                  "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
+                  "3. Appuyez sur « Ajouter ».\n\n" +
+                  "L'application sera installée comme une vraie appli !"
+              );
+              return;
+          }
+
+          // CAS Android : prompt natif
+          if (deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              console.log('Choix utilisateur :', outcome);
+              deferredPrompt = null;
+              hideButton();
+              return;
+          }
+
+          // Cas de secours (navigateur non compatible)
+          alert(
+              "Pour installer l'application :\n\n" +
+              "• Sur Android Chrome : menu ⋮ → « Installer l'application »\n" +
+              "• Sur iPhone Safari : icône Partager ⬆️ → « Sur l'écran d'accueil »"
+          );
+      });
+
+      // --- CAS 2 : iOS Safari (pas de beforeinstallprompt) ---
+      if (isIOS) {
+          // On affiche le bouton après 3 secondes pour ne pas gêner
+          setTimeout(() => showButton(), 3000);
+      }
+
+      // --- CAS 3 : Navigation non compatible (Firefox, etc.) ---
+      // On affiche aussi le bouton après un délai si rien n'a été déclenché
+      setTimeout(() => {
+          if (!installBtn.classList.contains('show') && !isIOS) {
+              // On n'affiche que si l'appli n'est pas déjà installée et si SW supporté
+              if ('serviceWorker' in navigator) {
+                  showButton();
+              }
+          }
+      }, 5000);
+
+      // Masquer définitivement si l'installation a réussi
+      window.addEventListener('appinstalled', () => {
+          console.log('🎉 Application installée !');
+          hideButton();
+          deferredPrompt = null;
+      });
+  })();
+  </script>
+</body>
+</html>

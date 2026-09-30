@@ -1,0 +1,68 @@
+{
+  "name": "AnimHebdo - Mercredi Pédago",
+  "short_name": "AnimHebdo",
+  "description": "Application de programmation des animations pédagogiques du mercredi. Fonctionne hors ligne.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#075e54",
+  "theme_color": "#075e54",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "logoapp.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logoapp.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logoapp.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logoapp.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Programmation",
+      "short_name": "Programmation",
+      "description": "Accéder directement à la programmation pédagogique",
+      "url": "./programmation.html",
+      "icons": [
+        {
+          "src": "logoapp.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Configuration",
+      "short_name": "Configuration",
+      "description": "Configurer l'année scolaire",
+      "url": "./config-annee.html",
+      "icons": [
+        {
+          "src": "logoapp.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

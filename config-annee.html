@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ===== PWA : Manifest & Meta ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#075e54">
+  <link rel="icon" type="image/png" href="logoapp.png">
+  <link rel="apple-touch-icon" href="logoapp.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+  <title>Configuration de l'année scolaire - AnimHebdo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      /* Palette aux couleurs officielles de WhatsApp Messenger */
+      --main-bg-color: #f0f2f5;           /* Fond clair application WhatsApp */
+      --primary-blue: #075e54;            /* Vert foncé iconique WhatsApp (Header/Nav) */
+      --whatsapp-teal: #128c7e;           /* Vert émeraude secondaire */
+      --whatsapp-accent: #25d366;         /* Vert vif WhatsApp pour les badges/accents */
+      --secondary-gray: #ffffff;          /* Cartes et conteneurs blancs */
+      --dark-text: #111b21;               /* Texte sombre pour une visibilité et un contraste optimaux */
+      --muted-text: #667781;              /* Texte secondaire lisible */
+      --border-color: #e9edef;            /* Bordures légères */
+      --card-shadow: 0 1px 3px rgba(11, 20, 26, 0.12);
+    }
+    body {
+      background-color: var(--main-bg-color);
+      color: var(--dark-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+    }
+    .card {
+      background-color: var(--secondary-gray);
+      box-shadow: var(--card-shadow);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .btn-primary {
+      background-color: var(--primary-blue);
+      border-color: var(--primary-blue);
+      color: #ffffff;
+      font-weight: 500;
+    }
+    .btn-primary:hover {
+      background-color: #054c44;
+      border-color: #054c44;
+      color: #ffffff;
+    }
+    .btn-secondary {
+      background-color: #54656f;
+      border-color: #54656f;
+      color: #ffffff;
+    }
+    .btn-secondary:hover {
+      background-color: #3b4a54;
+      border-color: #3b4a54;
+      color: #ffffff;
+    }
+    .btn-outline-light {
+      color: var(--primary-blue);
+      border-color: var(--primary-blue);
+    }
+    .btn-outline-light:hover {
+      background-color: var(--primary-blue);
+      color: #ffffff;
+    }
+    .list-group-item {
+      background-color: #ffffff;
+      border-color: var(--border-color);
+      color: var(--dark-text);
+    }
+    .badge.bg-secondary {
+      background-color: var(--whatsapp-accent) !important;
+      color: #0b141a;
+      font-weight: bold;
+    }
+    .navbar {
+      background-color: var(--primary-blue);
+    }
+    .navbar-brand, .nav-link {
+      color: #ffffff !important;
+    }
+    .nav-link.active {
+      color: #ffffff !important;
+      font-weight: bold;
+      border-bottom: 3px solid var(--whatsapp-accent);
+    }
+    .form-label {
+      color: var(--dark-text);
+      font-weight: 600;
+    }
+    .form-control {
+      background-color: #ffffff;
+      border-color: #d1d7db;
+      color: var(--dark-text);
+    }
+    .form-control:focus {
+      border-color: var(--whatsapp-teal);
+      box-shadow: 0 0 0 0.25rem rgba(18, 140, 126, 0.25);
+    }
+    .footer {
+      background-color: #e9edef;
+      color: var(--muted-text);
+      padding: 1rem 0;
+      text-align: center;
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+    }
+    .footer a {
+      color: var(--primary-blue);
+      text-decoration: underline;
+    }
+    .formatted-info, .formatted-date {
+        font-weight: bold;
+        color: var(--primary-blue);
+        margin-top: 5px;
+        display: none; /* Initially hidden */
+    }
+    .input-group.locked .form-control {
+      display: none;
+    }
+    .input-group.locked .formatted-info,
+    .input-group.locked .formatted-date {
+      display: block; /* Show when locked */
+    }
+    .modal-content {
+      background-color: #ffffff;
+      color: var(--dark-text);
+      border: 1px solid var(--border-color);
+    }
+    .modal-header {
+      background-color: var(--primary-blue);
+      color: #ffffff;
+    }
+    .modal-header .modal-title {
+      color: #ffffff;
+    }
+    .modal-header .btn-close {
+        filter: invert(1);
+    }
+    /* ===== BOUTON D'INSTALLATION FLOTTANT ===== */
+    #pwaInstallButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+      background-color: #25d366;
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      animation: pulseInstall 2s infinite;
+    }
+    #pwaInstallButton:hover {
+      background-color: #128c7e;
+      transform: scale(1.05);
+    }
+    #pwaInstallButton.show {
+      display: flex;
+    }
+    #pwaInstallButton .icon {
+      font-size: 1.2rem;
+    }
+    @keyframes pulseInstall {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+      50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">AnimHebdo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="config-annee.html">Configuration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="programmation.html">Programmation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="export.html">Export</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="fiche.html">Fiche</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="aide.html">Aide</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5 main-content">
+    <h2 class="text-center mb-4">Configuration de l'année scolaire</h2>
+
+    <div class="card p-4">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="etablissementName" class="form-label">Nom de l'établissement :</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="etablissementName">
+                <span id="formattedEtablissement" class="formatted-info"></span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="disciplineAtelier" class="form-label">Atelier disciplinaire :</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="disciplineAtelier">
+                <span id="formattedDiscipline" class="formatted-info"></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="animateurName" class="form-label">Nom de l'animateur d'établissement (AE) :</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="animateurName">
+                <span id="formattedAnimateur" class="formatted-info"></span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Début de l'année scolaire :</label>
+            <div class="input-group">
+                <input type="date" class="form-control" id="startDate" required>
+                <span id="formattedStartDate" class="formatted-date"></span>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="endDate" class="form-label">Fin de l'année scolaire :</label>
+            <div class="input-group">
+                <input type="date" class="form-control" id="endDate" required>
+                <span id="formattedEndDate" class="formatted-date"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <hr class="my-4">
+
+      <h5 class="mb-3">Ajouter une date à exclure</h5>
+      <div class="input-group mb-3">
+        <input type="date" class="form-control" id="exclusionDate">
+        <button class="btn btn-secondary" type="button" id="addExclusionButton">Ajouter</button>
+        <button class="btn btn-primary" type="button" id="viewExclusionsButton" style="display:none;" data-bs-toggle="modal" data-bs-target="#exclusionListModal">Voir la liste</button>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-primary btn-lg" id="generateButton">Générer les mercredis</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="unlockDatesButton" style="display:none;">Déverrouiller les dates</button>
+        <button type="button" class="btn btn-outline-light btn-sm" id="toggleListButton" style="display:none;">Afficher la liste des mercredis</button>
+      </div>
+    </div>
+
+    <div id="mercredisOutput" class="mt-5" style="display:none;">
+      <h3 class="mb-3">Mercredis disponibles : <span id="mercrediCount" class="badge bg-secondary">0</span></h3>
+      <ol class="list-group list-group-numbered" id="mercredisListOutput"></ol>
+    </div>
+  </div>
+
+  <div class="modal fade" id="exclusionListModal" tabindex="-1" aria-labelledby="exclusionListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exclusionListModalLabel">Dates exclues</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group" id="modalExclusionList"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer mt-auto">
+    <div class="container">
+      <p>Conçu par Atizoun Plateny AMOUSSOU | <a href="mailto:atizoun@gmail.com">atizoun@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
+  <button id="pwaInstallButton" type="button" title="Installer l'application">
+    <span class="icon">📲</span>
+    <span class="label">Installer l'appli</span>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const etablissementNameInput = document.getElementById('etablissementName');
+    const disciplineAtelierInput = document.getElementById('disciplineAtelier');
+    const animateurNameInput = document.getElementById('animateurName');
+    const formattedEtablissementSpan = document.getElementById('formattedEtablissement');
+    const formattedDisciplineSpan = document.getElementById('formattedDiscipline');
+    const formattedAnimateurSpan = document.getElementById('formattedAnimateur');
+
+    const addExclusionButton = document.getElementById('addExclusionButton');
+    const exclusionDateInput = document.getElementById('exclusionDate');
+    const viewExclusionsButton = document.getElementById('viewExclusionsButton');
+    const modalExclusionList = document.getElementById('modalExclusionList');
+
+    const generateButton = document.getElementById('generateButton');
+    const mercredisOutput = document.getElementById('mercredisOutput');
+    const mercredisListOutput = document.getElementById('mercredisListOutput');
+    const mercrediCount = document.getElementById('mercrediCount');
+    const unlockDatesButton = document.getElementById('unlockDatesButton');
+    const toggleListButton = document.getElementById('toggleListButton');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const formattedStartDateSpan = document.getElementById('formattedStartDate');
+    const formattedEndDateSpan = document.getElementById('formattedEndDate');
+
+    let exclusions = [];
+    let generatedWednesdays = [];
+
+    const formatter = new Intl.DateTimeFormat('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    function getFormattedDate(dateStr) {
+        if (!dateStr) return '';
+        const dateObj = new Date(dateStr + 'T12:00:00');
+        const formattedDate = formatter.format(dateObj);
+        return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    function saveToLocalStorage() {
+      const data = {
+        etablissementName: etablissementNameInput.value,
+        disciplineAtelier: disciplineAtelierInput.value,
+        animateurName: animateurNameInput.value,
+        startDate: startDateInput.value,
+        endDate: endDateInput.value,
+        exclusions: exclusions,
+        generatedWednesdays: generatedWednesdays
+      };
+      localStorage.setItem('animhebdoData', JSON.stringify(data));
+    }
+    
+    function loadFromLocalStorage() {
+      const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
+      if (savedData) {
+        etablissementNameInput.value = savedData.etablissementName || '';
+        disciplineAtelierInput.value = savedData.disciplineAtelier || '';
+        animateurNameInput.value = savedData.animateurName || '';
+        startDateInput.value = savedData.startDate || '';
+        endDateInput.value = savedData.endDate || '';
+        exclusions = savedData.exclusions || [];
+        generatedWednesdays = savedData.generatedWednesdays || [];
+
+        updateExclusionsView();
+        
+        if (generatedWednesdays.length > 0) {
+          formattedEtablissementSpan.textContent = savedData.etablissementName;
+          formattedDisciplineSpan.textContent = savedData.disciplineAtelier;
+          formattedAnimateurSpan.textContent = savedData.animateurName;
+          formattedStartDateSpan.textContent = getFormattedDate(savedData.startDate);
+          formattedEndDateSpan.textContent = getFormattedDate(savedData.endDate);
+
+          displayGeneratedWednesdays();
+          lockInputs();
+        }
+      }
+    }
+    
+    function updateExclusionsView() {
+        if (exclusions.length > 0) {
+            viewExclusionsButton.style.display = 'inline-block';
+        } else {
+            viewExclusionsButton.style.display = 'none';
+        }
+    }
+
+    function displayExclusionsModal() {
+        modalExclusionList.innerHTML = '';
+        if (exclusions.length === 0) {
+            modalExclusionList.innerHTML = '<li class="list-group-item">Aucune date exclue.</li>';
+            return;
+        }
+
+        exclusions.sort().forEach(date => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.textContent = date;
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn btn-sm btn-danger';
+            removeBtn.textContent = 'Supprimer';
+            removeBtn.addEventListener('click', function() {
+                exclusions = exclusions.filter(d => d !== date);
+                updateExclusionsView();
+                displayExclusionsModal();
+                saveToLocalStorage();
+            });
+            li.appendChild(removeBtn);
+            modalExclusionList.appendChild(li);
+        });
+    }
+
+    function getMercredisDisponibles(start, end, exclusions) {
+      const mercredis = [];
+      let date = new Date(start);
+      while (date <= new Date(end)) {
+        if (date.getDay() === 3) {
+          const iso = date.toISOString().split('T')[0];
+          if (!exclusions.includes(iso)) {
+            mercredis.push(iso);
+          }
+        }
+        date.setDate(date.getDate() + 1);
+      }
+      return mercredis;
+    }
+    
+    function displayGeneratedWednesdays() {
+      mercredisListOutput.innerHTML = '';
+      generatedWednesdays.forEach(dateStr => {
+        const formattedDate = getFormattedDate(dateStr);
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = formattedDate;
+        mercredisListOutput.appendChild(li);
+      });
+
+      mercrediCount.textContent = generatedWednesdays.length;
+      mercredisOutput.style.display = 'block';
+      toggleListButton.textContent = 'Masquer la liste des mercredis';
+    }
+
+    function lockInputs() {
+      etablissementNameInput.parentElement.classList.add('locked');
+      disciplineAtelierInput.parentElement.classList.add('locked');
+      animateurNameInput.parentElement.classList.add('locked');
+      startDateInput.parentElement.classList.add('locked');
+      endDateInput.parentElement.classList.add('locked');
+      
+      formattedEtablissementSpan.textContent = etablissementNameInput.value;
+      formattedDisciplineSpan.textContent = disciplineAtelierInput.value;
+      formattedAnimateurSpan.textContent = animateurNameInput.value;
+      formattedStartDateSpan.textContent = getFormattedDate(startDateInput.value);
+      formattedEndDateSpan.textContent = getFormattedDate(endDateInput.value);
+
+      unlockDatesButton.style.display = 'block';
+      toggleListButton.style.display = 'block';
+      
+      etablissementNameInput.disabled = true;
+      disciplineAtelierInput.disabled = true;
+      animateurNameInput.disabled = true;
+      startDateInput.disabled = true;
+      endDateInput.disabled = true;
+    }
+
+    function unlockInputs() {
+      etablissementNameInput.parentElement.classList.remove('locked');
+      disciplineAtelierInput.parentElement.classList.remove('locked');
+      animateurNameInput.parentElement.classList.remove('locked');
+      startDateInput.parentElement.classList.remove('locked');
+      endDateInput.parentElement.classList.remove('locked');
+
+      etablissementNameInput.disabled = false;
+      disciplineAtelierInput.disabled = false;
+      animateurNameInput.disabled = false;
+      startDateInput.disabled = false;
+      endDateInput.disabled = false;
+
+      unlockDatesButton.style.display = 'none';
+      mercredisOutput.style.display = 'none';
+      toggleListButton.style.display = 'none';
+      generatedWednesdays = [];
+      localStorage.removeItem('animhebdoData');
+      
+      etablissementNameInput.value = '';
+      disciplineAtelierInput.value = '';
+      animateurNameInput.value = '';
+      startDateInput.value = '';
+      endDateInput.value = '';
+      exclusions = [];
+      updateExclusionsView();
+    }
+
+    // --- Événements ---
+    document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+
+    addExclusionButton.addEventListener('click', function() {
+      const date = exclusionDateInput.value;
+      if (date && !exclusions.includes(date)) {
+        exclusions.push(date);
+        updateExclusionsView();
+        exclusionDateInput.value = '';
+        saveToLocalStorage();
+      }
+    });
+    
+    viewExclusionsButton.addEventListener('click', displayExclusionsModal);
+
+    generateButton.addEventListener('click', function() {
+      const etablissementName = etablissementNameInput.value;
+      const disciplineAtelier = disciplineAtelierInput.value;
+      const animateurName = animateurNameInput.value;
+      const startDate = startDateInput.value;
+      const endDate = endDateInput.value;
+
+      if (startDate && endDate && etablissementName && disciplineAtelier && animateurName) {
+        generatedWednesdays = getMercredisDisponibles(startDate, endDate, exclusions);
+        displayGeneratedWednesdays();
+        lockInputs();
+        saveToLocalStorage();
+      } else {
+        alert("Veuillez renseigner toutes les informations de l'établissement et les dates.");
+      }
+    });
+
+    unlockDatesButton.addEventListener('click', unlockInputs);
+
+    toggleListButton.addEventListener('click', function() {
+      if (mercredisOutput.style.display === 'none') {
+        mercredisOutput.style.display = 'block';
+        this.textContent = 'Masquer la liste des mercredis';
+      } else {
+        mercredisOutput.style.display = 'none';
+        this.textContent = 'Afficher la liste des mercredis';
+      }
+    });
+
+    // =====================================================================
+    // PWA - Installation intelligente + Enregistrement du Service Worker
+    // =====================================================================
+
+    // 1) Enregistrement du Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => {
+                    console.log('✅ Service Worker enregistré :', registration.scope);
+
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🔄 Nouvelle version disponible.');
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch((err) => console.error('❌ Échec SW :', err));
+        });
+    }
+
+    // 2) Logique d'installation intelligente
+    (function() {
+        const installBtn = document.getElementById('pwaInstallButton');
+        if (!installBtn) return;
+
+        let deferredPrompt = null;
+
+        // Détection iOS (Safari ne supporte pas beforeinstallprompt)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        // Détection si déjà installée (mode standalone)
+        const isStandalone =
+            window.matchMedia('(display-mode: standalone)').matches ||
+            window.navigator.standalone === true;
+
+        // Si déjà installée, on n'affiche rien
+        if (isStandalone) {
+            console.log('✅ Application déjà installée (mode standalone).');
+            return;
+        }
+
+        // Afficher le bouton selon le contexte
+        function showButton() {
+            installBtn.classList.add('show');
+        }
+        function hideButton() {
+            installBtn.classList.remove('show');
+        }
+
+        // --- CAS 1 : Android / Chrome / Edge (beforeinstallprompt supporté) ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showButton();
+        });
+
+        // Clic sur le bouton
+        installBtn.addEventListener('click', async () => {
+            // CAS iOS : instructions manuelles
+            if (isIOS && !deferredPrompt) {
+                alert(
+                    "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                    "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
+                    "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
+                    "3. Appuyez sur « Ajouter ».\n\n" +
+                    "L'application sera installée comme une vraie appli !"
+                );
+                return;
+            }
+
+            // CAS Android : prompt natif
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('Choix utilisateur :', outcome);
+                deferredPrompt = null;
+                hideButton();
+                return;
+            }
+
+            // Cas de secours (navigateur non compatible)
+            alert(
+                "Pour installer l'application :\n\n" +
+                "• Sur Android Chrome : menu ⋮ → « Installer l'application »\n" +
+                "• Sur iPhone Safari : icône Partager ⬆️ → « Sur l'écran d'accueil »"
+            );
+        });
+
+        // --- CAS 2 : iOS Safari (pas de beforeinstallprompt) ---
+        if (isIOS) {
+            // On affiche le bouton après 3 secondes pour ne pas gêner
+            setTimeout(() => showButton(), 3000);
+        }
+
+        // --- CAS 3 : Navigation non compatible (Firefox, etc.) ---
+        // On affiche aussi le bouton après un délai si rien n'a été déclenché
+        setTimeout(() => {
+            if (!installBtn.classList.contains('show') && !isIOS) {
+                // On n'affiche que si l'appli n'est pas déjà installée et si SW supporté
+                if ('serviceWorker' in navigator) {
+                    showButton();
+                }
+            }
+        }, 5000);
+
+        // Masquer définitivement si l'installation a réussi
+        window.addEventListener('appinstalled', () => {
+            console.log('🎉 Application installée !');
+            hideButton();
+            deferredPrompt = null;
+        });
+    })();
+  </script>
+
+</body>
+</html>
