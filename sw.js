@@ -1,11 +1,25 @@
 /* =====================================================================
    Service Worker - AnimHebdo / Mercredi Pédago
-   Version : 1.0.0
+   Version : 1.0.1 (isolation multi-apps GitHub Pages)
    Rôle : mise en cache hors ligne + support PWA + notifications push
    ===================================================================== */
 
 const CACHE_NAME = 'animhebdo-cache-v1';
 const RUNTIME_CACHE = 'animhebdo-runtime-v1';
+
+// Préfixe unique à cette application : sert à ne jamais toucher
+// aux caches d'autres applications hébergées sur le même domaine.
+const APP_CACHE_PREFIX = 'animhebdo-';
+
+// Portée réelle du Service Worker : tout ce qui est hors de ce chemin
+// appartient à d'autres applications et ne doit PAS être intercepté.
+// Ex : si sw.js est dans /AnimHebdo/, SW_SCOPE = '/AnimHebdo/'.
+const SW_SCOPE = (() => {
+  const path = self.location.pathname;
+  // On retire le nom du fichier sw.js pour ne garder que le dossier
+  const dir = path.substring(0, path.lastIndexOf('/') + 1);
+  return dir || '/';
+})();
 
 // Ressources locales à mettre en cache dès l'installation
 const PRECACHE_URLS = [
@@ -25,9 +39,17 @@ const RUNTIME_HOSTS = [
   'cdnjs.cloudflare.com'
 ];
 
+/* ---------- UTILITAIRE : appartenance à la portée ---------- */
+function isInScope(url) {
+  // On ne gère que les URL qui appartiennent à notre sous-dossier.
+  // Le préfixe SW_SCOPE garantit qu'on n'intercepte jamais les requêtes
+  // d'une autre application hébergée ailleurs sur le même domaine.
+  return url.pathname.startsWith(SW_SCOPE);
+}
+
 /* ---------- INSTALLATION ---------- */
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installation en cours...');
+  console.log('[SW] Installation en cours... (scope:', SW_SCOPE, ')');
   event.waitUntil(
     caches.open(CACHE_NAME)
     .then((cache) => {
@@ -46,7 +68,14 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-        .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE)
+        // On ne supprime QUE les caches préfixés par APP_CACHE_PREFIX.
+        // Ainsi, les caches d'autres applications du même domaine
+        // (ex : genpct-cache-v1) ne sont JAMAIS touchés.
+        .filter((name) =>
+          name.startsWith(APP_CACHE_PREFIX) &&
+          name !== CACHE_NAME &&
+          name !== RUNTIME_CACHE
+        )
         .map((name) => {
           console.log('[SW] Suppression ancien cache :', name);
           return caches.delete(name);
@@ -64,6 +93,13 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   
   const url = new URL(request.url);
+  
+  // ---- Filtre de portée : ne rien intercepter hors de notre dossier ----
+  // Empêche toute interférence avec une autre application GitHub Pages
+  // (ex : SuperAE, GenPCT) hébergée sur le même domaine.
+  if (url.origin === self.location.origin && !isInScope(url)) {
+    return;
+  }
   
   // ---- Stratégie 1 : Cache First pour les fichiers locaux ----
   if (url.origin === self.location.origin) {
@@ -91,8 +127,9 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         }).catch(() => {
-          // Hors ligne ET pas en cache : retour à l'accueil
-          return caches.match('./index.html');
+          // Hors ligne ET pas en cache : retour à l'accueil de NOTRE app
+          return caches.match(SW_SCOPE + 'index.html') ||
+            caches.match('./index.html');
         });
       })
     );
@@ -156,7 +193,7 @@ self.addEventListener('push', (event) => {
       tag: data.tag,
       requireInteraction: true,
       vibrate: [200, 100, 200],
-      data: { url: data.url || './index.html' }
+      data: { url: data.url || (SW_SCOPE + 'index.html') }
     })
   );
 });
@@ -164,13 +201,13 @@ self.addEventListener('push', (event) => {
 /* ---------- CLIC SUR UNE NOTIFICATION ---------- */
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = (event.notification.data && event.notification.data.url) || './index.html';
+  const targetUrl = (event.notification.data && event.notification.data.url) || (SW_SCOPE + 'index.html');
   
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       // Si une fenêtre de l'appli est déjà ouverte, on la focus
       for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
+        if (client.url.includes(SW_SCOPE) && 'focus' in client) {
           client.navigate(targetUrl);
           return client.focus();
         }
