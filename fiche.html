@@ -718,16 +718,16 @@
           50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
         }
 
-        /* ====== NOUVEAU : MODAL RÉPONSES AUX QUESTIONS DES ACTIVITÉS ====== */
+        /* ====== MODAL RÉPONSES AUX ACTIVITÉS ====== */
         .answers-modal .modal-content {
             border-radius: 16px;
-            border: 1px solid rgba(0, 128, 105, 0.5);
+            border: 1px solid rgba(18, 140, 126, 0.5);
             overflow: hidden;
             box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
             background: #ffffff;
         }
         .answers-modal .modal-header {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
             color: #fff;
             border-bottom: 2px solid var(--accent);
             padding: 14px 22px;
@@ -753,38 +753,67 @@
             opacity: 1;
         }
         .answers-modal .modal-body {
-            padding: 26px 24px;
-            background: linear-gradient(180deg, #ffffff 0%, #f0f8f6 100%);
-            max-height: 65vh;
+            padding: 30px 26px 26px 26px;
+            background: linear-gradient(180deg, #ffffff 0%, #f0f9f6 100%);
+            max-height: 68vh;
             overflow-y: auto;
         }
         .answers-modal .modal-subtitle {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.05rem;
-            color: #334155;
-            margin-bottom: 18px;
+            color: #475569;
             text-align: center;
-            line-height: 1.55;
+            margin-bottom: 22px;
+            line-height: 1.6;
             font-weight: 500;
         }
-        .answers-modal .answer-prompt-content {
-            font-family: 'Inter', sans-serif;
+        .answers-modal .answers-intro {
+            background: #e8f5f0;
+            border-left: 4px solid var(--secondary-green);
+            border-radius: 10px;
+            padding: 14px 18px;
             font-size: 0.88rem;
-            line-height: 1.75;
-            color: #0b3d36;
+            color: #0f3d36;
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+        .answers-modal .answers-intro i {
+            color: var(--secondary-green);
+            margin-right: 8px;
+        }
+        .answers-prompt-content {
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: #0d1b2a;
             white-space: pre-wrap;
             word-wrap: break-word;
-            background: #f0fdfa;
-            border-left: 4px solid var(--primary-green);
+            background: #f4fbf9;
+            border: 1px solid rgba(18, 140, 126, 0.3);
             border-radius: 10px;
             padding: 20px 22px;
+            max-height: 42vh;
+            overflow-y: auto;
         }
-        .answers-modal .answer-prompt-content strong {
-            color: #0b3d36;
+        .answers-modal .answers-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid rgba(37, 211, 102, 0.5);
+            color: var(--primary-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        .answers-modal .answers-badge i {
+            color: var(--accent);
         }
         .answers-modal .modal-footer {
-            background: #f0f8f6;
-            border-top: 1px solid rgba(0, 128, 105, 0.25);
+            background: #f0f9f6;
+            border-top: 1px solid rgba(18, 140, 126, 0.25);
             padding: 14px 20px;
             justify-content: center;
             gap: 12px;
@@ -810,7 +839,7 @@
             color: #fff;
         }
         .answers-modal .btn-close-answers {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -825,36 +854,8 @@
         }
         .answers-modal .btn-close-answers:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(18, 140, 126, 0.4);
+            box-shadow: 0 8px 20px rgba(100, 116, 139, 0.4);
             color: #fff;
-        }
-        .answers-modal .answers-emblem {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(37, 211, 102, 0.2), rgba(18, 140, 126, 0.25));
-            border: 1px solid rgba(37, 211, 102, 0.6);
-            margin-bottom: 14px;
-            box-shadow: 0 0 30px rgba(37, 211, 102, 0.25);
-        }
-        .answers-modal .answers-emblem i {
-            font-size: 1.5rem;
-            color: var(--primary-green);
-        }
-        .answers-modal .answers-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.35rem;
-            color: var(--primary-green);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        .answers-modal .answers-title .gold {
-            color: var(--accent);
-            font-style: italic;
         }
     </style>
 </head>
@@ -890,8 +891,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="programmation.html">
-                            <i class="fas fa-list-check"></i> Programmation
-                        </a>
+                            <i class="fas fa-list-check"></i> Programmation                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="export.html">
@@ -904,13 +904,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#specialPromptModal">
-                            <i class="fas fa-code"></i> PROMPT SPÉCIAL DE MODIF CODE LaTeX
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#answersModal">
+                            <i class="fas fa-pen-fancy"></i> Réponses aux activités
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#answersModal">
-                            <i class="fas fa-comments"></i> Réponses aux questions des activités
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#specialPromptModal">
+                            <i class="fas fa-code"></i> PROMPT SPÉCIAL DE MODIF CODE LaTeX
                         </a>
                     </li>
                     <li class="nav-item">
@@ -1296,6 +1296,7 @@
                             <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Structure : En-tête → Objectifs → Situation → Tâche → Chronogramme → Activités → Annexes</li>
                             <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Toutes les données numériques sont dans le support</li>
                             <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Document optimisé pour moins de pages</li>
+                            <li><i class="fas fa-check-circle" style="color:var(--success);"></i> Nouveau : onglet « Réponses aux activités » pour générer les réponses LaTeX</li>
                         </ul>
                     </div>
                 </div>
@@ -1318,6 +1319,45 @@
         </div>
     </footer>
     </div> <!-- /#appContent -->
+
+    <!-- ====== MODAL RÉPONSES AUX ACTIVITÉS ====== -->
+    <div class="modal fade answers-modal" id="answersModal" tabindex="-1" aria-labelledby="answersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answersModalLabel">
+                        <i class="fas fa-pen-fancy"></i>
+                        Réponses aux activités de la fiche pédagogique d'animation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-subtitle">
+                        Générez les <strong>réponses détaillées</strong> aux consignes des activités de la fiche pédagogique,
+                        en code LaTeX compilable sur Overleaf, avec une entête identique à celle de la fiche d'animation.
+                    </p>
+                    <div class="answers-badge">
+                        <i class="fas fa-file-pdf"></i> Analyse du PDF de la fiche pédagogique jointe
+                    </div>
+                    <div class="answers-intro">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Mode d'emploi :</strong> joignez le PDF de votre fiche pédagogique d'animation,
+                        collez ce prompt dans votre IA, et obtenez les réponses aux activités sous forme de code LaTeX
+                        prêt à être compilé sur Overleaf.
+                    </div>
+                    <div class="answers-prompt-content" id="answersPromptText">Chargement du prompt…</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-copy-answers" id="btnCopyAnswersPrompt">
+                        <i class="fas fa-copy"></i> Copier le prompt
+                    </button>
+                    <button type="button" class="btn-close-answers" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ====== MODAL PROMPT SPÉCIAL DE MODIF CODE LaTeX ====== -->
     <div class="modal fade special-prompt-modal" id="specialPromptModal" tabindex="-1" aria-labelledby="specialPromptModalLabel" aria-hidden="true">
@@ -1351,74 +1391,6 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                         <i class="fas fa-copy"></i> Copier le prompt
                     </button>
                     <button type="button" class="btn-close-special" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i> Fermer
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ====== NOUVEAU : MODAL RÉPONSES AUX QUESTIONS DES ACTIVITÉS ====== -->
-    <div class="modal fade answers-modal" id="answersModal" tabindex="-1" aria-labelledby="answersModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="answersModalLabel">
-                        <i class="fas fa-comments"></i>
-                        Réponses aux questions des activités
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="answers-emblem">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h2 class="answers-title">
-                        Réponses aux <span class="gold">questions</span> des activités
-                    </h2>
-                    <p class="modal-subtitle">
-                        Ce prompt permet de générer les réponses détaillées aux questions des activités de la fiche pédagogique d'animation.
-                        Il récupère automatiquement les informations de forme et de fond du document, et accepte l'analyse du PDF de la fiche créée.
-                    </p>
-                    <div class="answer-prompt-content" id="answerPromptText">Tu es une intelligence artificielle experte en Physique-Chimie-Technologie (PCT) et en ingénierie de formation selon l'approche par compétences (APC) béninoise.
-
-Contexte : Une fiche pédagogique d'animation (format APZ) a été créée. Elle contient des activités avec des consignes/questions destinées aux enseignants en formation. Tu dois produire les réponses détaillées, rigoureuses et complètes à toutes les questions/consignes présentes dans les activités de cette fiche.
-
-Informations disponibles :
-- Le document PDF de la fiche pédagogique d'animation est joint à cette requête. Analyse-le attentivement pour en extraire :
-  * Le thème de l'animation
-  * Les objectifs (général et spécifiques)
-  * Les activités et leurs consignes
-  * Les supports mentionnés
-  * Les données numériques éventuelles
-  * Les stratégies pédagogiques utilisées
-  * Le contexte et la situation de départ
-
-Tâche :
-1. Analyse le document PDF joint pour identifier toutes les questions/consignes des activités.
-2. Pour chaque consigne, rédige une réponse complète, précise et scientifiquement exacte.
-3. Respecte le niveau des enseignants en formation (formation continue PCT).
-4. Utilise un langage clair, professionnel et pédagogique.
-5. Structure tes réponses par activité, en reprenant les titres et les consignes numérotées (X.1, X.2, etc.).
-6. Si des données numériques sont présentes dans le support, exploite-les dans tes réponses.
-7. Si des schémas ou figures sont mentionnés, décris-les ou explique-les en texte.
-8. Pour les questions ouvertes (analyse, réflexion, production), propose des éléments de réponse variés et pertinents.
-9. Termine par une synthèse des points clés à retenir.
-
-Contraintes :
-- Ne rédige pas de nouvelles questions.
-- Ne modifie pas la structure de la fiche.
-- Réponds uniquement aux consignes présentes dans les activités.
-- Sois exhaustif et précis.
-- Utilise le français comme langue de rédaction.
-
-Rends-moi l'ensemble des réponses aux questions des activités, structuré et prêt à être utilisé en formation.</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-copy-answers" id="btnCopyAnswersPrompt">
-                        <i class="fas fa-copy"></i> Copier le prompt
-                    </button>
-                    <button type="button" class="btn-close-answers" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Fermer
                     </button>
                 </div>
@@ -2707,10 +2679,57 @@ Génère uniquement le code LaTeX complet de la fiche pédagogique d'animation (
         });
 
         // ============================================================
-        // COPIE DU PROMPT RÉPONSES AUX QUESTIONS DES ACTIVITÉS
+        // PROMPT « RÉPONSES AUX ACTIVITÉS » — contenu statique
+        // ============================================================
+        (function initAnswersPrompt() {
+            const answersPrompt = `Tu es une intelligence artificielle experte en Physique-Chimie-Technologie (PCT), spécialisée dans la formation des enseignants selon l'approche par compétences (APC) béninoise.
+
+CONTEXTE :
+On te fournit en pièce jointe le PDF d'une fiche pédagogique d'animation de type APZ, créée conformément à la structure officielle. Cette fiche contient :
+- un en-tête administratif (pays, direction départementale, établissement, année scolaire, type d'animation, thème, animateur, date, lieu, éventuellement logo ou entête générale par image) ;
+- le contexte et la justification ;
+- les objectifs général et spécifiques (3 axes) ;
+- le chronogramme ;
+- la situation de départ et la tâche générale ;
+- des activités avec, pour chacune : titre, support, stratégie(s), durée ventilée, et des consignes numérotées (X.1, X.2, X.3…) ;
+- éventuellement les annexes.
+
+TA MISSION :
+Rédiger les RÉPONSES DÉTAILLÉES aux consignes des activités de la fiche pédagogique d'animation fournie en PDF.
+
+CONTRAINTES ABSOLUES :
+1. Tu dois te baser EXCLUSIVEMENT sur le contenu du document PDF joint pour récupérer :
+   - les informations de forme (structure, numérotation, canevas, entête, etc.) ;
+   - les informations de fond (thème, objectifs, activités, consignes exactes, support, stratégie, durée).
+2. Les réponses doivent être rédigées OBLIGATOIREMENT en code LaTeX compilable sur Overleaf, produisant un PDF.
+3. L'entête du document LaTeX des réponses doit être IDENTIQUE à celle de la fiche pédagogique d'animation (mêmes paramètres d'en-tête : pays, direction, établissement, année scolaire, type d'animation, thème, etc.), afin de respecter les caractéristiques visuelles du document source.
+4. La mise en forme LaTeX doit respecter les paramètres de la fiche d'origine (police, taille, marges, couleurs d'accent, styles de titres, encadrés sobres, tableaux, etc.).
+5. Tu dois générer un document LaTeX UNIQUE et COMPLET, prêt à être compilé, contenant :
+   - une entête identique ;
+   - un titre clair (ex. « Réponses aux activités — Fiche pédagogique d'animation ») ;
+   - pour chaque activité, un bloc reprenant le titre de l'activité et présentant les RÉPONSES aux consignes, sous forme rédigée, argumentée, pédagogique et conforme aux exigences de l'APC béninoise ;
+   - les réponses peuvent inclure des schémas simples en TikZ, des tableaux, des équations, si nécessaire, mais toujours en LaTeX compilable.
+6. Ne pas inventer de nouvelles activités : se limiter strictement à celles présentes dans la fiche PDF.
+7. Rendre un code LaTeX complet, sans texte superflu autour, avec les packages nécessaires (inputenc, fontenc, geometry, amsmath, amssymb, graphicx, xcolor, array, tabularx, enumitem, float, tcolorbox, titlesec, etc., selon les besoins).
+
+FORMAT ATTENDU :
+- Réponds uniquement par le code LaTeX complet, prêt à être copié dans Overleaf.
+- Le document doit être un article ou un rapport, avec les mêmes choix de classe et de mise en page que la fiche d'animation (taille, marges, interligne, etc.).
+- L'entête doit reprendre exactement les mêmes informations et la même disposition visuelle (logo ou entête image si présent dans la fiche PDF).
+- Les réponses aux consignes doivent être numérotées en cohérence avec la numérotation X.1, X.2, X.3… des consignes d'origine.
+
+Analyse le PDF joint, extrais-en toutes les informations nécessaires, et génère le code LaTeX complet des réponses.`;
+            const container = document.getElementById('answersPromptText');
+            if (container) {
+                container.textContent = answersPrompt;
+            }
+        })();
+
+        // ============================================================
+        // COPIE DU PROMPT RÉPONSES AUX ACTIVITÉS
         // ============================================================
         document.getElementById('btnCopyAnswersPrompt').addEventListener('click', function() {
-            const text = document.getElementById('answerPromptText').innerText;
+            const text = document.getElementById('answersPromptText').innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const btn = this;
                 const originalText = btn.innerHTML;
