@@ -64,5 +64,11 @@
         }
       ]
     }
-  ]
+  ],
+  "_isolation": {
+    "appId": "superae",
+    "cachePrefix": "superae-",
+    "scopeType": "relative",
+    "note": "Propriété non standard ignorée par les navigateurs — sert uniquement de trace pour l'isolation multi-apps GitHub Pages."
+  }
 }

@@ -9,11 +9,13 @@
   <!-- ===== PWA : Manifest & Meta ===== -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#075e54">
-  <link rel="icon" type="image/png" href="logoapp.png">
-  <link rel="apple-touch-icon" href="logoapp.png">
+  <!-- 🔧 CORRECTION ISOLATION : icône renommée en logoappae.png -->
+  <link rel="icon" type="image/png" href="logoappae.png">
+  <link rel="apple-touch-icon" href="logoappae.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="AnimHebdo">
+  <!-- 🔧 CORRECTION ISOLATION : nom PWA renommé en SuperAE -->
+  <meta name="apple-mobile-web-app-title" content="SuperAE">
 
   <style>
     :root {
@@ -574,10 +576,12 @@ ${schoolDirector}
     // PWA - Installation intelligente + Enregistrement du Service Worker
     // =====================================================================
 
-    // 1) Enregistrement du Service Worker
+    // 🔧 CORRECTION ISOLATION : Enregistrement du Service Worker avec scope explicite
+    // Le scope './' garantit que ce SW ne contrôle QUE le dossier de SuperAE
+    // et n'interfère PAS avec GenPCT ou d'autres applications du même domaine.
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
+            navigator.serviceWorker.register('./sw.js', { scope: './' })
                 .then((registration) => {
                     console.log('✅ Service Worker enregistré :', registration.scope);
 
@@ -637,7 +641,7 @@ ${schoolDirector}
             // CAS iOS : instructions manuelles
             if (isIOS && !deferredPrompt) {
                 alert(
-                    "📲 Pour installer AnimHebdo sur votre iPhone :\n\n" +
+                    "📲 Pour installer SuperAE sur votre iPhone :\n\n" +
                     "1. Appuyez sur l'icône Partager ⬆️ en bas de Safari.\n" +
                     "2. Faites défiler et choisissez « Sur l'écran d'accueil ».\n" +
                     "3. Appuyez sur « Ajouter ».\n\n" +

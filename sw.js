@@ -1,19 +1,22 @@
 /* =====================================================================
-   Service Worker - AnimHebdo / Mercredi Pédago
-   Version : 1.0.1 (isolation multi-apps GitHub Pages)
+   Service Worker - SuperAE (anciennement AnimHebdo / Mercredi Pédago)
+   Version : 1.0.2 (isolation multi-apps GitHub Pages)
    Rôle : mise en cache hors ligne + support PWA + notifications push
    ===================================================================== */
 
-const CACHE_NAME = 'animhebdo-cache-v1';
-const RUNTIME_CACHE = 'animhebdo-runtime-v1';
+// 🔧 CORRECTION ISOLATION : préfixe "superae-" unique à cette application
+// pour ne jamais toucher aux caches d'une autre app du même domaine.
+const CACHE_NAME = 'superae-cache-v1';
+const RUNTIME_CACHE = 'superae-runtime-v1';
 
 // Préfixe unique à cette application : sert à ne jamais toucher
 // aux caches d'autres applications hébergées sur le même domaine.
-const APP_CACHE_PREFIX = 'animhebdo-';
+// 🔧 CORRECTION ISOLATION : 'animhebdo-' → 'superae-'
+const APP_CACHE_PREFIX = 'superae-';
 
 // Portée réelle du Service Worker : tout ce qui est hors de ce chemin
 // appartient à d'autres applications et ne doit PAS être intercepté.
-// Ex : si sw.js est dans /AnimHebdo/, SW_SCOPE = '/AnimHebdo/'.
+// Ex : si sw.js est dans /SuperAE-/, SW_SCOPE = '/SuperAE-/'.
 const SW_SCOPE = (() => {
   const path = self.location.pathname;
   // On retire le nom du fichier sw.js pour ne garder que le dossier
@@ -168,12 +171,13 @@ self.addEventListener('fetch', (event) => {
 /* ---------- NOTIFICATIONS PUSH ---------- */
 self.addEventListener('push', (event) => {
   console.log('[SW] Push reçu');
+  // 🔧 CORRECTION ISOLATION : titre et tag par défaut adaptés à SuperAE
   let data = {
-    title: 'AnimHebdo',
+    title: 'SuperAE',
     body: 'Nouvelle notification',
     icon: './logoappae.png',
     badge: './logoappae.png',
-    tag: 'animhebdo'
+    tag: 'superae'
   };
   
   if (event.data) {
