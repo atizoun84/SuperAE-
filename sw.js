@@ -16,7 +16,7 @@ const PRECACHE_URLS = [
   './export.html',
   './aide.html',
   './manifest.json',
-  './logoapp.png'
+  './logoappae.png'
 ];
 
 // Ressources externes (CDN) à mettre en cache à la volée
@@ -134,8 +134,8 @@ self.addEventListener('push', (event) => {
   let data = {
     title: 'AnimHebdo',
     body: 'Nouvelle notification',
-    icon: './logoapp.png',
-    badge: './logoapp.png',
+    icon: './logoappae.png',
+    badge: './logoappae.png',
     tag: 'animhebdo'
   };
   
