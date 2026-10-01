@@ -717,6 +717,145 @@
           0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
           50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
         }
+
+        /* ====== NOUVEAU : MODAL RÉPONSES AUX QUESTIONS DES ACTIVITÉS ====== */
+        .answers-modal .modal-content {
+            border-radius: 16px;
+            border: 1px solid rgba(0, 128, 105, 0.5);
+            overflow: hidden;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+        }
+        .answers-modal .modal-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: #fff;
+            border-bottom: 2px solid var(--accent);
+            padding: 14px 22px;
+        }
+        .answers-modal .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+        .answers-modal .modal-title i {
+            color: #dcf8c6;
+        }
+        .answers-modal .btn-close {
+            filter: invert(1) brightness(2);
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+        .answers-modal .btn-close:hover {
+            opacity: 1;
+        }
+        .answers-modal .modal-body {
+            padding: 26px 24px;
+            background: linear-gradient(180deg, #ffffff 0%, #f0f8f6 100%);
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .answers-modal .modal-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+            color: #334155;
+            margin-bottom: 18px;
+            text-align: center;
+            line-height: 1.55;
+            font-weight: 500;
+        }
+        .answers-modal .answer-prompt-content {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            line-height: 1.75;
+            color: #0b3d36;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #f0fdfa;
+            border-left: 4px solid var(--primary-green);
+            border-radius: 10px;
+            padding: 20px 22px;
+        }
+        .answers-modal .answer-prompt-content strong {
+            color: #0b3d36;
+        }
+        .answers-modal .modal-footer {
+            background: #f0f8f6;
+            border-top: 1px solid rgba(0, 128, 105, 0.25);
+            padding: 14px 20px;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .answers-modal .btn-copy-answers {
+            background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 28px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .answers-modal .btn-copy-answers:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(18, 140, 126, 0.4);
+            color: #fff;
+        }
+        .answers-modal .btn-close-answers {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 30px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .answers-modal .btn-close-answers:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(18, 140, 126, 0.4);
+            color: #fff;
+        }
+        .answers-modal .answers-emblem {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.2), rgba(18, 140, 126, 0.25));
+            border: 1px solid rgba(37, 211, 102, 0.6);
+            margin-bottom: 14px;
+            box-shadow: 0 0 30px rgba(37, 211, 102, 0.25);
+        }
+        .answers-modal .answers-emblem i {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+        .answers-modal .answers-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.35rem;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .answers-modal .answers-title .gold {
+            color: var(--accent);
+            font-style: italic;
+        }
     </style>
 </head>
 <body onload="chargerDonnees()">
@@ -767,6 +906,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#specialPromptModal">
                             <i class="fas fa-code"></i> PROMPT SPÉCIAL DE MODIF CODE LaTeX
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#answersModal">
+                            <i class="fas fa-comments"></i> Réponses aux questions des activités
                         </a>
                     </li>
                     <li class="nav-item">
@@ -1207,6 +1351,74 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                         <i class="fas fa-copy"></i> Copier le prompt
                     </button>
                     <button type="button" class="btn-close-special" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== NOUVEAU : MODAL RÉPONSES AUX QUESTIONS DES ACTIVITÉS ====== -->
+    <div class="modal fade answers-modal" id="answersModal" tabindex="-1" aria-labelledby="answersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answersModalLabel">
+                        <i class="fas fa-comments"></i>
+                        Réponses aux questions des activités
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="answers-emblem">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h2 class="answers-title">
+                        Réponses aux <span class="gold">questions</span> des activités
+                    </h2>
+                    <p class="modal-subtitle">
+                        Ce prompt permet de générer les réponses détaillées aux questions des activités de la fiche pédagogique d'animation.
+                        Il récupère automatiquement les informations de forme et de fond du document, et accepte l'analyse du PDF de la fiche créée.
+                    </p>
+                    <div class="answer-prompt-content" id="answerPromptText">Tu es une intelligence artificielle experte en Physique-Chimie-Technologie (PCT) et en ingénierie de formation selon l'approche par compétences (APC) béninoise.
+
+Contexte : Une fiche pédagogique d'animation (format APZ) a été créée. Elle contient des activités avec des consignes/questions destinées aux enseignants en formation. Tu dois produire les réponses détaillées, rigoureuses et complètes à toutes les questions/consignes présentes dans les activités de cette fiche.
+
+Informations disponibles :
+- Le document PDF de la fiche pédagogique d'animation est joint à cette requête. Analyse-le attentivement pour en extraire :
+  * Le thème de l'animation
+  * Les objectifs (général et spécifiques)
+  * Les activités et leurs consignes
+  * Les supports mentionnés
+  * Les données numériques éventuelles
+  * Les stratégies pédagogiques utilisées
+  * Le contexte et la situation de départ
+
+Tâche :
+1. Analyse le document PDF joint pour identifier toutes les questions/consignes des activités.
+2. Pour chaque consigne, rédige une réponse complète, précise et scientifiquement exacte.
+3. Respecte le niveau des enseignants en formation (formation continue PCT).
+4. Utilise un langage clair, professionnel et pédagogique.
+5. Structure tes réponses par activité, en reprenant les titres et les consignes numérotées (X.1, X.2, etc.).
+6. Si des données numériques sont présentes dans le support, exploite-les dans tes réponses.
+7. Si des schémas ou figures sont mentionnés, décris-les ou explique-les en texte.
+8. Pour les questions ouvertes (analyse, réflexion, production), propose des éléments de réponse variés et pertinents.
+9. Termine par une synthèse des points clés à retenir.
+
+Contraintes :
+- Ne rédige pas de nouvelles questions.
+- Ne modifie pas la structure de la fiche.
+- Réponds uniquement aux consignes présentes dans les activités.
+- Sois exhaustif et précis.
+- Utilise le français comme langue de rédaction.
+
+Rends-moi l'ensemble des réponses aux questions des activités, structuré et prêt à être utilisé en formation.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-copy-answers" id="btnCopyAnswersPrompt">
+                        <i class="fas fa-copy"></i> Copier le prompt
+                    </button>
+                    <button type="button" class="btn-close-answers" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Fermer
                     </button>
                 </div>
@@ -2484,6 +2696,21 @@ Génère uniquement le code LaTeX complet de la fiche pédagogique d'animation (
         // ============================================================
         document.getElementById('btnCopySpecialPrompt').addEventListener('click', function() {
             const text = document.getElementById('specialPromptText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = this;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                setTimeout(() => btn.innerHTML = originalText, 2000);
+            }).catch(() => {
+                alert('Erreur lors de la copie. Veuillez sélectionner manuellement.');
+            });
+        });
+
+        // ============================================================
+        // COPIE DU PROMPT RÉPONSES AUX QUESTIONS DES ACTIVITÉS
+        // ============================================================
+        document.getElementById('btnCopyAnswersPrompt').addEventListener('click', function() {
+            const text = document.getElementById('answerPromptText').innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const btn = this;
                 const originalText = btn.innerHTML;
