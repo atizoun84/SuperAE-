@@ -29,7 +29,7 @@
             --dark-text: #111b21;
             --muted-text: #667781;
             --card-shadow: 0 1px 3px rgba(11, 20, 26, 0.13);
-            
+
             /* Variables de compatibilité avec l'ancien code */
             --primary: #008069;
             --primary-dark: #00695c;
@@ -46,12 +46,12 @@
             --muted: #667781;
             --whatsapp-bg: #e5ddd5;
         }
-        
+
         * {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        
+
         body {
             background-color: var(--main-bg-color);
             background-attachment: fixed;
@@ -62,7 +62,7 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         /* ====== NAVBAR (style WhatsApp uniformisé) ====== */
         .app-navbar {
             background-color: var(--primary-green);
@@ -148,11 +148,11 @@
         .app-navbar .navbar-toggler-icon {
             filter: invert(1);
         }
-        
+
         .container {
             max-width: 1400px;
         }
-        
+
         .card {
             background-color: var(--card-bg);
             box-shadow: var(--card-shadow);
@@ -161,7 +161,7 @@
             color: var(--dark-text);
             margin-bottom: 25px;
         }
-        
+
         .card-header {
             background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
             color: white;
@@ -170,29 +170,29 @@
             font-weight: bold;
             border-bottom: 2px solid #dcf8c6;
         }
-        
+
         .card-header h3, .card-header h4 {
             margin: 0;
         }
-        
+
         .form-label {
             font-weight: 600;
             color: var(--primary-green);
             margin-top: 8px;
             font-size: 0.9rem;
         }
-        
+
         .form-control, .form-select {
             border-radius: 8px;
             border: 1.5px solid #e9edef;
             transition: all 0.3s;
         }
-        
+
         .form-control:focus, .form-select:focus {
             border-color: var(--secondary-green);
             box-shadow: 0 0 0 0.2rem rgba(18, 140, 126, 0.18);
         }
-        
+
         .btn-generate {
             background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
             color: white;
@@ -203,13 +203,13 @@
             font-size: 1rem;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        
+
         .btn-generate:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(37, 211, 102, 0.4);
             color: #fff;
         }
-        
+
         .btn-reset {
             background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
             color: white;
@@ -224,7 +224,7 @@
             box-shadow: 0 8px 22px rgba(231, 76, 60, 0.4);
             color: #fff;
         }
-        
+
         .btn-copy {
             background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
             color: white;
@@ -239,7 +239,7 @@
             box-shadow: 0 8px 22px rgba(0, 128, 105, 0.4);
             color: #fff;
         }
-        
+
         .prompt-area {
             background: #0d1b2a;
             color: #e8ecf1;
@@ -254,7 +254,7 @@
             word-wrap: break-word;
             border-top: 1px solid rgba(37, 211, 102, 0.25);
         }
-        
+
         .section-title {
             border-left: 4px solid var(--accent);
             padding-left: 12px;
@@ -263,7 +263,7 @@
             font-size: 1.15rem;
             font-weight: 700;
         }
-        
+
         .sub-section {
             background: #f0f2f5;
             padding: 15px;
@@ -271,7 +271,7 @@
             margin-bottom: 15px;
             border-left: 3px solid rgba(37, 211, 102, 0.5);
         }
-        
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -280,7 +280,7 @@
                 padding-bottom: 75px;
             }
         }
-        
+
         .form-check-input:checked {
             background-color: var(--primary-green);
             border-color: var(--primary-green);
@@ -289,16 +289,16 @@
             border-color: var(--secondary-green);
             box-shadow: 0 0 0 0.15rem rgba(18, 140, 126, 0.2);
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .fade-in {
             animation: fadeIn 0.3s ease-out;
         }
-        
+
         .image-config {
             background: #f4f8fc;
             padding: 10px;
@@ -858,8 +858,11 @@
             color: #fff;
         }
     </style>
+<style id="superae-boot-guard">
+html:not(.superae-ready) body { visibility: hidden; }
+</style>
 </head>
-<body onload="chargerDonnees()">
+<body>
 
     <!-- ====== NAVBAR (style WhatsApp uniformisé, liens mis à jour) ====== -->
     <nav class="navbar navbar-expand-lg app-navbar" id="mainNavbar">
@@ -960,7 +963,7 @@
                                     <input type="text" class="form-control" id="directionDepartementale" placeholder="Ex: DDESTFP DE L'ATLANTIQUE" style="text-transform: uppercase;">
                                 </div>
                             </div>
-                            
+
                             <div class="row mt-2">
                                 <div class="col-md-6">
                                     <label class="form-label"><i class="fas fa-school"></i> Établissement</label>
@@ -1246,7 +1249,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row mt-4">
                                 <div class="col-md-4">
                                     <button type="button" class="btn btn-generate w-100" onclick="genererPrompt()">
@@ -1268,7 +1271,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -1281,7 +1284,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="card">
                     <div class="card-header">
                         <h4><i class="fas fa-info-circle"></i> Instructions</h4>
@@ -1808,12 +1811,12 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
         // ============================================================
         // GESTION DYNAMIQUE DES IMAGES
         // ============================================================
-        
+
         function generateImageFields(containerId, count, prefix) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
-            
+
             for (let i = 1; i <= count; i++) {
                 const block = document.createElement('div');
                 block.className = 'image-detail-block';
@@ -1867,7 +1870,7 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 `;
                 container.appendChild(block);
             }
-            
+
             if (count > 1) {
                 const gridBlock = document.createElement('div');
                 gridBlock.className = 'image-grid-options';
@@ -1913,7 +1916,7 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 container.appendChild(gridBlock);
             }
         }
-        
+
         const hasImagesSimple = document.getElementById('hasImagesSimple');
         const imagesSimpleConfig = document.getElementById('imagesSimpleConfig');
         if(hasImagesSimple) {
@@ -1925,7 +1928,7 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 }
             });
         }
-        
+
         const nbImagesSimple = document.getElementById('nbImagesSimple');
         if (nbImagesSimple) {
             nbImagesSimple.addEventListener('input', function() {
@@ -1935,7 +1938,7 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 }
             });
         }
-        
+
         function getImageData(prefix) {
             const count = parseInt(document.getElementById('nbImages' + prefix.charAt(0).toUpperCase() + prefix.slice(1)).value) || 1;
             const images = [];
@@ -1948,21 +1951,21 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 const height = document.getElementById(prefix + '_height_' + i)?.value || '';
                 images.push({ file, caption, layout, size, width, height });
             }
-            
+
             const gridType = document.getElementById(prefix + '_grid_type')?.value || 'none';
             const gridWidth = document.getElementById(prefix + '_grid_width')?.value || '1.0\\linewidth';
             const gridGap = document.getElementById(prefix + '_grid_gap')?.value || '0.5cm';
             const gridCaption = document.getElementById(prefix + '_grid_caption')?.value || '';
-            
+
             return { images, gridType, gridWidth, gridGap, gridCaption };
         }
-        
+
         function formatImageDataForPrompt(imageData, sectionLabel) {
             if (!imageData || !imageData.images || imageData.images.length === 0) return '';
-            
+
             let result = `\n--- IMAGES POUR ${sectionLabel} ---\n`;
             result += `Nombre d'images : ${imageData.images.length}\n`;
-            
+
             imageData.images.forEach((img, idx) => {
                 const sizeMap = {
                     'small': '0.3\\linewidth',
@@ -1978,13 +1981,13 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 }
                 result += `  Image ${idx + 1} : Fichier "${img.file}" — Légende : "${img.caption}" — Disposition : ${img.layout} — Taille : ${sizeStr}\n`;
             });
-            
+
             if (imageData.gridType && imageData.gridType !== 'none') {
                 result += `  Disposition groupée : ${imageData.gridType} — Largeur : ${imageData.gridWidth} — Espacement : ${imageData.gridGap}`;
                 if (imageData.gridCaption) result += ` — Légende globale : "${imageData.gridCaption}"`;
                 result += `\n`;
             }
-            
+
             return result;
         }
 
@@ -2060,6 +2063,23 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
         // ============================================================
         const PCT_KEY_PREFIX = 'ficheapcreator_field_';
         const PCT_STORAGE_KEY = 'ficheAPcreator_savedData_v1';
+        const SUPERAE_FICHE_PATH = SUPERAE_ROOT + '/fiche/data';
+        let _lastFormData = {};
+        let _saveTimer = null;
+        let _pendingData = null;
+        function _flushFicheSave() {
+            if (_saveTimer) { clearTimeout(_saveTimer); _saveTimer = null; }
+            if (_pendingData) {
+                const dataToSave = _pendingData;
+                _pendingData = null;
+                superaeDb.ref(SUPERAE_FICHE_PATH).set(dataToSave)
+                    .catch(e => console.error('[SuperAE] fiche save:', e));
+            }
+        }
+        window.addEventListener('beforeunload', _flushFicheSave);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') _flushFicheSave();
+        });
 
         // ============================================================
         // PRÉ-REMPLISSAGE « LIBERTÉ DE CRÉATION » (rouge gras, modifiable)
@@ -2089,32 +2109,33 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
         }
 
         document.getElementById('promptForm').addEventListener('input', e => majStyleLibre(e.target));
-        
+
         function sauvegarderDonnees() {
             const formData = {};
             const inputs = document.querySelectorAll('#promptForm input, #promptForm textarea, #promptForm select');
-            
+
             inputs.forEach(input => {
                 if (input.id) {
                     const valeur = (input.type === 'checkbox') ? input.checked : input.value;
                     formData[input.id] = valeur;
-                    try {
-                        localStorage.setItem(PCT_KEY_PREFIX + input.id, JSON.stringify(valeur));
-                    } catch(e) { /* ignore quota errors */ }
                 }
             });
-            
-            try {
-                localStorage.setItem(PCT_STORAGE_KEY, JSON.stringify(formData));
-            } catch(e) { /* ignore quota errors */ }
+            _lastFormData = formData;
+            _pendingData = formData;
+            if (_saveTimer) clearTimeout(_saveTimer);
+            _saveTimer = setTimeout(_flushFicheSave, 800);
         }
 
-        function chargerDonnees() {
-            const savedData = localStorage.getItem(PCT_STORAGE_KEY);
+        async function chargerDonnees() {
             let formData = null;
-            if (savedData) {
-                try { formData = JSON.parse(savedData); } catch(e) {}
+            try {
+                const snap = await superaeDb.ref(SUPERAE_FICHE_PATH).once('value');
+                formData = snap.val();
+            } catch (e) {
+                console.error('[SuperAE] Echec lecture fiche :', e);
+                return;
             }
+            _lastFormData = formData || {};
 
             const nbActivites = formData && formData['nbActivites'] !== undefined
                 ? parseInt(formData['nbActivites']) || 4
@@ -2138,9 +2159,8 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
 
             syncChronoTitlesFromActivites();
 
-            if (!localStorage.getItem(LIBRE_FLAG)) {
+            if (!formData) {
                 appliquerPrefillLibre();
-                try { localStorage.setItem(LIBRE_FLAG, '1'); } catch(e) {}
             }
             rafraichirStyleLibre();
 
@@ -2153,27 +2173,14 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
             }
             if (typeof toggleEnteteGenerale === 'function') toggleEnteteGenerale();
         }
-        
+
         window.PCT_KEY_PREFIX = PCT_KEY_PREFIX;
         window.getPCTData = function() {
-            const data = {};
-            const savedData = localStorage.getItem(PCT_STORAGE_KEY);
-            if (savedData) {
-                try { Object.assign(data, JSON.parse(savedData)); } catch(e) {}
-            }
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith(PCT_KEY_PREFIX)) {
-                    const fieldId = key.substring(PCT_KEY_PREFIX.length);
-                    try { data[fieldId] = JSON.parse(localStorage.getItem(key)); } catch(e) {}
-                }
-            }
-            return data;
+            return Object.assign({}, _lastFormData);
         };
         window.getPCTField = function(fieldId, defaultValue) {
-            const raw = localStorage.getItem(PCT_KEY_PREFIX + fieldId);
-            if (raw === null) return (defaultValue !== undefined ? defaultValue : '');
-            try { return JSON.parse(raw); } catch(e) { return raw; }
+            if (_lastFormData && fieldId in _lastFormData) return _lastFormData[fieldId];
+            return (defaultValue !== undefined ? defaultValue : '');
         };
 
         document.getElementById('promptForm').addEventListener('change', sauvegarderDonnees);
@@ -2298,10 +2305,10 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
                 const titre = document.getElementById('activite' + i + 'Titre')?.value || "";
                 chrono.push({ horaire, titre });
             }
-            
+
             const pays = (document.getElementById('pays').value || "RÉPUBLIQUE DU BÉNIN").toUpperCase();
             const directionDepartementale = (document.getElementById('directionDepartementale').value || "DIRECTION DÉPARTEMENTALE DES ENSEIGNEMENTS SECONDAIRES, TECHNIQUES ET DE LA FORMATION PROFESSIONNELLE").toUpperCase();
-            
+
             const lFont = document.getElementById('latexFont').value;
             const lSize = document.getElementById('latexFontSize').value;
             const lColor = document.getElementById('latexColor').value;
@@ -2311,7 +2318,7 @@ Rends-moi le code LaTeX complet mis à jour, en conservant tout le reste identiq
             const lWatermark = document.getElementById('latexWatermark').value;
             const lTwoCols = document.getElementById('latexTwoColumns').checked;
             const lSpacing = document.getElementById('latexLineSpacing').value;
-            
+
             const hasEntete = document.getElementById('hasEnteteGenerale')?.checked || false;
 
             const hasLogo = document.getElementById('hasLogoEtablissement').checked;
@@ -2397,7 +2404,7 @@ CONSIGNES IMPÉRATIVES :
    - Puis centrer en dessous le nom de l'établissement, l'année scolaire et le type d'animation.
    - Ajouter également (si renseignés) : structure organisatrice, animateur, date et lieu.
    ${hasLogo ? `   - INSÉRER LE LOGO "${logoFileName}" DANS LE CARTOUCHE de manière élégante et professionnelle.` : '   - Aucun logo à insérer.'}
-   
+
    Exemple de structure à reproduire :
    \\begin{center}
    \\begin{tabularx}{\\linewidth}{@{}X r@{}}
@@ -2539,13 +2546,13 @@ ${annexesStr}
     - Les tableaux doivent être en noir et blanc : pas de \\rowcolor coloré, éventuellement \\rowcolor[gray]{0.9} pour un gris très clair neutre uniquement si nécessaire.
 ${point4Entete}
 5. GESTION DES IMAGES/SCHÉMAS : `;
-            
+
             if (document.getElementById('hasImagesSimple').checked) {
                 prompt += `Inclure les images selon les spécifications suivantes :\n${imagesSimpleStr}\nPour chaque figure, utiliser \\begin{figure}[H] \\centering \\includegraphics[width=...,height=...]{nom_fichier} \\caption{légende} \\end{figure}. Respecter le nom de fichier .png, la disposition et la taille demandées. Pour les dispositions groupées (grille/mosaïque), utiliser des mini-pages ou des sous-figures (subcaption).`;
             } else {
                 prompt += `Aucune image requise.`;
             }
-            
+
             prompt += `
 6. CONTRAINTES SUPPLÉMENTAIRES :
     - Le CONTEXTE doit respecter IMPÉRATIVEMENT les 6 caractéristiques énumérées ci-dessus.
@@ -2624,7 +2631,7 @@ Génère uniquement le code LaTeX complet de la fiche pédagogique d'animation (
             resultDiv.classList.add('fade-in');
             setTimeout(() => resultDiv.classList.remove('fade-in'), 300);
         }
-        
+
         function copierPrompt() {
             const promptText = document.getElementById('promptResult').innerText;
             navigator.clipboard.writeText(promptText).then(() => {
@@ -2636,29 +2643,26 @@ Génère uniquement le code LaTeX complet de la fiche pédagogique d'animation (
                 alert('Erreur lors de la copie. Veuillez sélectionner manuellement.');
             });
         }
-        
+
         function resetForm() {
             if(confirm("Voulez-vous vraiment réinitialiser tout le formulaire ?")) {
                 document.getElementById('promptForm').reset();
-                localStorage.removeItem(PCT_STORAGE_KEY);
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && key.startsWith(PCT_KEY_PREFIX)) keysToRemove.push(key);
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                
+                _lastFormData = {};
+                _pendingData = null;
+                if (_saveTimer) { clearTimeout(_saveTimer); _saveTimer = null; }
+                superaeDb.ref(SUPERAE_FICHE_PATH).remove().catch(e => console.error('[SuperAE] fiche reset:', e));
+
                 document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
                 document.getElementById('promptResult').innerHTML = '<i class="fas fa-info-circle"></i> Formulaire réinitialisé.';
                 if(hasImagesSimple) { imagesSimpleConfig.style.display = 'none'; document.getElementById('imageDetailsSimple').innerHTML = ''; }
                 if(logoConfig) { logoConfig.style.display = 'none'; }
                 if(logoCustomSizeRow) { logoCustomSizeRow.style.display = 'none'; }
-                
+
                 const nbDefault = parseInt(document.getElementById('nbActivites').value) || 4;
                 genererActivites(nbDefault);
                 genererChronogramme(nbDefault);
                 appliquerPrefillLibre();
-                
+
                 if (typeof toggleEnteteGenerale === 'function') toggleEnteteGenerale();
             }
         }
@@ -2740,5 +2744,22 @@ Analyse le PDF joint, extrais-en toutes les informations nécessaires, et génè
             });
         });
     </script>
+  <!-- Firebase SDK (compat v10) + config SuperAE -->
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="superae-ui.js"></script>
+  <script src="superae-progress.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await superaeEnsureSignedIn();
+        await chargerDonnees();
+      } catch (e) {
+        console.error('[SuperAE] Connexion/chargement echoue :', e);
+      }
+    });
+  </script>
 </body>
 </html>

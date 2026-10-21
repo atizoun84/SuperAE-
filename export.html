@@ -152,6 +152,9 @@
       50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
     }
   </style>
+<style id="superae-boot-guard">
+html:not(.superae-ready) body { visibility: hidden; }
+</style>
 </head>
 <body>
 
@@ -292,11 +295,22 @@
     }
 
     // Fonction principale de chargement des données (appelée au DOMContentLoaded)
-    function loadData() {
-        // Récupération des données les plus récentes du localStorage
-        const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
-        const savedThemes = JSON.parse(localStorage.getItem('animhebdoThemes'));
-        const savedTeachers = JSON.parse(localStorage.getItem('animhebdoTeachers'));
+    async function loadData() {
+        // Récupération des données les plus récentes du cloud Firebase
+        let savedData = null, savedThemes = null, savedTeachers = null;
+        try {
+            const [snapData, snapThemes, snapTeachers] = await Promise.all([
+                superaeDb.ref(SUPERAE_ROOT + '/config').once('value'),
+                superaeDb.ref(SUPERAE_ROOT + '/themes').once('value'),
+                superaeDb.ref(SUPERAE_ROOT + '/teachers').once('value')
+            ]);
+            savedData = snapData.val();
+            savedThemes = snapThemes.val();
+            savedTeachers = snapTeachers.val();
+        } catch (e) {
+            console.error('[SuperAE] Echec lecture cloud :', e);
+            return;
+        }
 
         if (savedData) {
             schoolDirector = savedData.animateurName || '';
@@ -435,7 +449,14 @@ ${schoolDirector}
     });
     
     // Le chargement des données se fait automatiquement au chargement de la page.
-    document.addEventListener('DOMContentLoaded', loadData);
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await superaeEnsureSignedIn();
+        await loadData();
+      } catch (e) {
+        console.error('[SuperAE] Connexion/chargement echoue :', e);
+      }
+    });
   </script>
 
   <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
@@ -565,5 +586,12 @@ ${schoolDirector}
   })();
   </script>
 
+  <!-- Firebase SDK (compat v10) + config SuperAE -->
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="superae-ui.js"></script>
+  <script src="superae-progress.js"></script>
 </body>
 </html>

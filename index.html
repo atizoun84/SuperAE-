@@ -138,6 +138,9 @@
       50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
     }
   </style>
+<style id="superae-boot-guard">
+html:not(.superae-ready) body { visibility: hidden; }
+</style>
 </head>
 <body>
   
@@ -307,10 +310,21 @@
       return nextAnimationDate;
     }
 
-    function loadData() {
-      const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
-      const savedThemes = JSON.parse(localStorage.getItem('animhebdoThemes'));
-      const savedTeachers = JSON.parse(localStorage.getItem('animhebdoTeachers'));
+    async function loadData() {
+      let savedData = null, savedThemes = null, savedTeachers = null;
+      try {
+        const [snapData, snapThemes, snapTeachers] = await Promise.all([
+          superaeDb.ref(SUPERAE_ROOT + '/config').once('value'),
+          superaeDb.ref(SUPERAE_ROOT + '/themes').once('value'),
+          superaeDb.ref(SUPERAE_ROOT + '/teachers').once('value')
+        ]);
+        savedData = snapData.val();
+        savedThemes = snapThemes.val();
+        savedTeachers = snapTeachers.val();
+      } catch (e) {
+        console.error('[SuperAE] Echec lecture cloud :', e);
+        return;
+      }
 
       if (savedData) {
           schoolDirector = savedData.animateurName || 'Non défini';
@@ -693,7 +707,21 @@ ${schoolDirector}
         });
     })();
 
-    document.addEventListener('DOMContentLoaded', loadData);
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await superaeEnsureSignedIn();
+        await loadData();
+      } catch (e) {
+        console.error('[SuperAE] Connexion/chargement echoue :', e);
+      }
+    });
   </script>
+  <!-- Firebase SDK (compat v10) + config SuperAE -->
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="superae-ui.js"></script>
+  <script src="superae-progress.js"></script>
 </body>
 </html>

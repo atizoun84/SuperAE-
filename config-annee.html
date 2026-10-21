@@ -181,6 +181,9 @@
       50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
     }
   </style>
+<style id="superae-boot-guard">
+html:not(.superae-ready) body { visibility: hidden; }
+</style>
 </head>
 <body>
 
@@ -355,7 +358,7 @@
         return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     }
 
-    function saveToLocalStorage() {
+    async function saveToLocalStorage() {
       const data = {
         etablissementName: etablissementNameInput.value,
         disciplineAtelier: disciplineAtelierInput.value,
@@ -365,11 +368,24 @@
         exclusions: exclusions,
         generatedWednesdays: generatedWednesdays
       };
-      localStorage.setItem('animhebdoData', JSON.stringify(data));
+      try {
+        await superaeDb.ref(SUPERAE_ROOT + '/config').set(data);
+      } catch (e) {
+        console.error('[SuperAE] Echec sauvegarde config :', e);
+        alert('Erreur de sauvegarde dans le cloud : ' + e.message);
+      }
     }
     
-    function loadFromLocalStorage() {
-      const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
+    async function loadFromLocalStorage() {
+      let savedData = null;
+      try {
+        const snap = await superaeDb.ref(SUPERAE_ROOT + '/config').once('value');
+        savedData = snap.val();
+      } catch (e) {
+        console.error('[SuperAE] Echec lecture config :', e);
+        alert('Erreur de lecture du cloud : ' + e.message);
+        return;
+      }
       if (savedData) {
         etablissementNameInput.value = savedData.etablissementName || '';
         disciplineAtelierInput.value = savedData.disciplineAtelier || '';
@@ -497,7 +513,7 @@
       mercredisOutput.style.display = 'none';
       toggleListButton.style.display = 'none';
       generatedWednesdays = [];
-      localStorage.removeItem('animhebdoData');
+      superaeDb.ref(SUPERAE_ROOT + '/config').remove().catch(e => console.error('[SuperAE] Echec suppression config :', e));
       
       etablissementNameInput.value = '';
       disciplineAtelierInput.value = '';
@@ -509,7 +525,14 @@
     }
 
     // --- Événements ---
-    document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await superaeEnsureSignedIn();
+        await loadFromLocalStorage();
+      } catch (e) {
+        console.error('[SuperAE] Connexion/chargement echoue :', e);
+      }
+    });
 
     addExclusionButton.addEventListener('click', function() {
       const date = exclusionDateInput.value;
@@ -672,5 +695,12 @@
     })();
   </script>
 
+  <!-- Firebase SDK (compat v10) + config SuperAE -->
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="superae-ui.js"></script>
+  <script src="superae-progress.js"></script>
 </body>
 </html>

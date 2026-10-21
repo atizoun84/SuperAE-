@@ -198,6 +198,9 @@
       50% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7); }
     }
   </style>
+<style id="superae-boot-guard">
+html:not(.superae-ready) body { visibility: hidden; }
+</style>
 </head>
 <body>
 
@@ -435,20 +438,28 @@
     }
     
     // Vérifie l'état de verrouillage au chargement
-    function checkLockState() {
-        const savedLockState = localStorage.getItem('animhebdoLockState');
-        if (savedLockState === 'locked') {
+    async function checkLockState() {
+        const snapLock = await superaeDb.ref(SUPERAE_ROOT + '/settings/lockState').once('value');
+        if (snapLock.val() === 'locked') {
             lockProgramming(true); 
         }
     }
 
-    function loadData() {
-        const savedData = JSON.parse(localStorage.getItem('animhebdoData'));
-        const savedThemes = JSON.parse(localStorage.getItem('animhebdoThemes'));
-        const savedTeachers = JSON.parse(localStorage.getItem('animhebdoTeachers'));
-        const savedImportedThemes = JSON.parse(localStorage.getItem('animhebdoImportedThemes'));
-        // AJOUT : Récupère le dernier offset si sauvegardé
-        const savedOffset = localStorage.getItem('animhebdoApOffset');
+    async function loadData() {
+    const [snapData, snapThemes, snapTeachers, snapImported, snapOffset] = await Promise.all([
+      superaeDb.ref(SUPERAE_ROOT + '/config').once('value'),
+      superaeDb.ref(SUPERAE_ROOT + '/themes').once('value'),
+      superaeDb.ref(SUPERAE_ROOT + '/teachers').once('value'),
+      superaeDb.ref(SUPERAE_ROOT + '/importedThemes').once('value'),
+      superaeDb.ref(SUPERAE_ROOT + '/settings/apOffset').once('value')
+    ]);
+    let savedData = snapData.val();
+    let savedThemes = snapThemes.val();
+    let savedTeachers = snapTeachers.val();
+    let savedImportedThemes = snapImported.val();
+    let savedOffset = snapOffset.val();
+    if (savedTeachers && !Array.isArray(savedTeachers)) savedTeachers = Object.values(savedTeachers);
+    if (savedImportedThemes && !Array.isArray(savedImportedThemes)) savedImportedThemes = Object.values(savedImportedThemes);
 
 
         if (savedThemes) themes = savedThemes;
@@ -479,7 +490,7 @@
             reProgramButton.style.display = 'none';
         }
         
-        checkLockState(); 
+        await checkLockState();
     }
 
     function renderList(mercredis) {
@@ -551,9 +562,9 @@
                 return;
             }
             
-            // Mise à jour de la donnée et du localStorage
+            // Mise à jour de la donnée et de la base Firebase
             themes[currentModalDate].animateurPrincipal = trimmedName;
-            localStorage.setItem('animhebdoThemes', JSON.stringify(themes));
+            superaeDb.ref(SUPERAE_ROOT + '/themes').set(themes).catch(e => console.error('[SuperAE] themes set:', e));
             
             // Mise à jour de la modale
             modalAnimateurPrincipal.textContent = trimmedName;
@@ -611,7 +622,7 @@
                     const isDuplicate = teachers.some((t, i) => i !== index && getTeacherName(t).toLowerCase() === newName.trim().toLowerCase());
                     if (!isDuplicate) {
                         teachers[index] = { name: newName.trim(), whatsapp: newWhatsapp ? newWhatsapp.trim() : '' };
-                        localStorage.setItem('animhebdoTeachers', JSON.stringify(teachers));
+                        superaeDb.ref(SUPERAE_ROOT + '/teachers').set(teachers).catch(e => console.error('[SuperAE] teachers set:', e));
                         displayTeachersModal();
                         // AJOUT : Message plein écran transparent
                         showFullscreenToast('✅ Professeur modifié avec succès !');
@@ -627,7 +638,7 @@
             deleteBtn.addEventListener('click', () => {
                 if (confirm(`Êtes-vous sûr de vouloir supprimer "${teacherName}" ?`)) {
                     teachers.splice(index, 1);
-                    localStorage.setItem('animhebdoTeachers', JSON.stringify(teachers));
+                    superaeDb.ref(SUPERAE_ROOT + '/teachers').set(teachers).catch(e => console.error('[SuperAE] teachers set:', e));
                     updateTeacherCount();
                     displayTeachersModal();
                     // AJOUT : Message plein écran transparent
@@ -653,7 +664,7 @@
                     name: teacherName,
                     whatsapp: teacherWhatsapp
                 });
-                localStorage.setItem('animhebdoTeachers', JSON.stringify(teachers));
+                superaeDb.ref(SUPERAE_ROOT + '/teachers').set(teachers).catch(e => console.error('[SuperAE] teachers set:', e));
                 updateTeacherCount();
                 teacherInput.value = '';
                 teacherWhatsappInput.value = '';
@@ -687,7 +698,7 @@
             const json = XLSX.utils.sheet_to_json(worksheet);
 
             importedThemes = json.map(row => row.themes).filter(theme => theme);
-            localStorage.setItem('animhebdoImportedThemes', JSON.stringify(importedThemes));
+            superaeDb.ref(SUPERAE_ROOT + '/importedThemes').set(importedThemes).catch(e => console.error('[SuperAE] importedThemes set:', e));
             updateThemesCount();
             
             alert(`Fichier importé avec succès ! ${importedThemes.length} thèmes trouvés.`);
@@ -731,7 +742,7 @@
             lastApOffset = 0;
         }
 
-        localStorage.setItem('animhebdoApOffset', lastApOffset);
+        superaeDb.ref(SUPERAE_ROOT + '/settings/apOffset').set(lastApOffset).catch(e => console.error('[SuperAE] apOffset set:', e));
 
         // Les index de départ sont décalés par rapport au nouvel offset
         let apIndex = initialOffset;
@@ -782,7 +793,7 @@
             themeIndex++;
         });
         
-        localStorage.setItem('animhebdoThemes', JSON.stringify(themes));
+        superaeDb.ref(SUPERAE_ROOT + '/themes').set(themes).catch(e => console.error('[SuperAE] themes set:', e));
         renderList(mercredis);
         
         // AFFINEMENT FONCTIONNEL : Bascule vers le bouton "Reprogrammer" après la première exécution
@@ -817,7 +828,7 @@
             toggleLockButton.textContent = '🔓 Déverrouiller la programmation';
             toggleLockButton.classList.remove('btn-outline-light');
             toggleLockButton.classList.add('btn-danger');
-            if (!initialLoad) localStorage.setItem('animhebdoLockState', 'locked');
+            if (!initialLoad) superaeDb.ref(SUPERAE_ROOT + '/settings/lockState').set('locked').catch(e => console.error('[SuperAE] lockState set:', e));
             if (!initialLoad) {
                 // AJOUT : Message plein écran transparent
                 showFullscreenToast('🔒 Programmation verrouillée.');
@@ -826,7 +837,7 @@
             toggleLockButton.textContent = '🔒 Verrouiller la programmation';
             toggleLockButton.classList.remove('btn-danger');
             toggleLockButton.classList.add('btn-outline-light');
-            localStorage.removeItem('animhebdoLockState');
+            superaeDb.ref(SUPERAE_ROOT + '/settings/lockState').remove().catch(e => console.error('[SuperAE] lockState remove:', e));
             if (!initialLoad) {
                 // AJOUT : Message plein écran transparent
                 showFullscreenToast('🔓 Programmation déverrouillée.');
@@ -849,7 +860,14 @@
         }
     });
 
-    document.addEventListener('DOMContentLoaded', loadData);
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await superaeEnsureSignedIn();
+        await loadData();
+      } catch (e) {
+        console.error('[SuperAE] Connexion/chargement echoue :', e);
+      }
+    });
   </script>
 
   <!-- ===== PWA : Bouton d'installation flottant intelligent ===== -->
@@ -979,5 +997,12 @@
   })();
   </script>
 
+  <!-- Firebase SDK (compat v10) + config SuperAE -->
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="superae-ui.js"></script>
+  <script src="superae-progress.js"></script>
 </body>
 </html>
